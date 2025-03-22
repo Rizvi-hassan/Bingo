@@ -1,0 +1,123 @@
+.head-hero {
+    position: absolute;
+    top: 0;
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+
+.hero-logo {
+    width: 80%;
+    height: 50vh;
+    margin-top: 25vh;
+    animation: moveHead 2s ease-out 1 forwards;
+    background-color: #ffb703;
+}
+
+@keyframes moveHead {
+
+    0%,
+    50% {
+        width: 80%;
+        height: 50vh;
+        margin-top: 25vh;
+    }
+
+    80%,
+    100% {
+        width: max(20%, 200px);
+        margin-top: 10vh;
+        height: max(20vh, 100px);
+    }
+}
+
+.hero-path {
+    fill: transparent;
+    stroke: #023047;
+    stroke-width: 0.2;
+    stroke-dasharray: 70;
+    stroke-dashoffset: 70;
+    animation: headAnimation 1s ease-in 1 forwards;
+}
+
+@keyframes headAnimation {
+    0% {
+        stroke-dashoffset: 70;
+    }
+
+    70% {
+        fill: transparent;
+    }
+
+    100% {
+        fill: #023047;
+        stroke-dashoffset: 0;
+    }
+}
+
+.body-hero {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    gap: 5%;
+    opacity: 0;
+    transition: opacity 400ms ease;
+}
+
+.body-hero .login-box {
+    position: absolute;
+    bottom: 5rem;
+}
+
+.body-hero .login-box .login-btn {
+    background-color: #2aff17;
+    border: 5px solid #10bb00;
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-size: 20px;
+    transition: scale 100ms ease, background-color 100ms ease;
+    transform: translate3d(0, 0, 0);
+}
+
+.body-hero .login-box .shake{
+    animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+.body-hero .login-box .login-btn:active {
+    background-color: #7eff72;
+    scale: 0.9;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+@media screen and (max-width: 560px) {
+    .body-hero {
+        flex-direction: column;
+    }
+}

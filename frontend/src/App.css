@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Orbitron:wght@400..900&family=Piedra&family=Rubik+Dirt&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+body {
+  background-color: #FFB703;
+  width: 100vw;
+  height: 100vh;
+}
+
+.btn {
+  font-family: "Rubik Dirt", system-ui;
+  width: 10rem;
+  height: 3rem;
+  background-color: #FB8500;
+  font-size: x-large;
+  color: #023047;
+  outline: none;
+  border: transparent;
+  border-radius: 1rem;
+  transition: border 100ms ease, font-size 100ms ease;
+}
+
+.btn:hover {
+  border: 5px solid #023047;
+  font-size: large;
+}
+
+p {
+  font-family: "Cabin Sketch", sans-serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  padding: 0.8rem 0;
+}

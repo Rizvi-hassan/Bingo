@@ -1,0 +1,84 @@
+.host .head {
+    padding-top: 1rem;
+    padding-left: 1rem;
+}
+
+.host .logo {
+    height: 5vh;
+}
+
+.host .path {
+    fill: #023047;
+}
+
+.host .body {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5%;
+}
+
+.host .body h1 {
+    display: block;
+    margin: auto;
+    margin-bottom: 2rem;
+    width: fit-content;
+    font-size: 4rem;
+    font-family: "Piedra", serif;
+}
+
+.host .body .box {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem;
+    gap: 1rem;
+}
+
+.host .body .box .room-id{
+    background: #8ECAE6;
+    border: 5px solid #219EBC;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+}
+
+.host .body .box .copy{
+    background-color: #00fb21;
+    padding: 0.3rem 0.9rem;
+    margin-left: 0.5rem;
+    border: 5px solid #21bc21;
+    font-size: 20px;
+    border-radius: 8px;
+    transition: scale 100ms ease;
+}
+
+.host .body .box .copy:active{
+    scale: 0.9;
+}
+
+
+.host .body .box .btn-player {
+    box-sizing: border-box;
+    margin: 0rem 1rem;
+    /* width: 3rem; */
+    /* height: 3rem; */
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 5px solid #FB8500;
+    background-color: #FB8500;
+    /* transition: scale 100ms ease-in-out, border 100ms ease-in-out; */
+    font-size: 20px;
+}
+
+.select-diff {
+    border: 5px solid #219EBC !important;
+    background-color: #8ECAE6 !important;
+}
+
+
+@media screen and (max-width: 560px) {
+
+}

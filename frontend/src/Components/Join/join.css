@@ -1,0 +1,66 @@
+.join .head {
+    padding-top: 1rem;
+    padding-left: 1rem;
+}
+
+.join .logo {
+    height: 10vh;
+}
+
+.join .path {
+    fill: #023047;
+}
+
+.join .body {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5%;
+}
+
+.join .body h1 {
+    display: block;
+    margin: auto;
+    margin-bottom: 2rem;
+    width: fit-content;
+    font-size: 7rem;
+    font-family: "Piedra", serif;
+}
+
+.join .body .box {
+    display: flex;
+    width: 20rem;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem;
+    gap: 1rem;
+}
+
+.join .body .box .roomid {
+    font-weight: bolder;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 0.3rem;
+    font-size: 20px;
+    outline: none;
+    background: #8ECAE6;
+    border: 5px solid #219EBC;
+    border-radius: 8px;
+}
+
+.invalid {
+    background: #ee7979 !important;
+    border: 5px solid #c40404 !important;
+}
+
+@media screen and (max-width: 560px) {
+    .join .logo {
+        height: 10vw;
+    }
+
+    .join .body h1 {
+        font-size: 5rem;
+    }
+}

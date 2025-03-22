@@ -1,0 +1,49 @@
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 3rem;
+}
+
+.login .head {
+    position: absolute;
+    top: 10%;
+    /* border: 1px solid; */
+}
+
+.login .logo {
+    height: 15vh;
+}
+
+.login .path {
+    fill: #023047;
+}
+
+.login .google-btn {
+    width: 20rem;
+    height: 4rem;
+    display: inline-flex;
+    align-items: center;
+    font-size: 24px;
+    justify-content: center;
+    gap: 7%;
+    border-radius: 1rem;
+}
+
+.login .google-logo {
+    height: 60%;
+}
+
+@media screen and (max-width: 560px) {
+    .login .logo {
+        width: 70vw;
+    }
+
+    .login .google-btn {
+        width: 15rem;
+        height: 3rem;
+        font-size: 15px;
+    }
+}

@@ -1,0 +1,193 @@
+.finish-container {
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.leaderboard-title {
+    font-size: 4rem;
+    margin-bottom: 2rem;
+    color: #023047;
+    text-align: center;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.7),
+        -2px -2px 4px rgba(0, 0, 0, 0.1);
+    font-family: "Piedra", serif;
+}
+
+.winners-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 5rem;
+}
+
+.neumorphic-card {
+    background-color: #FB8500;
+    border-radius: 16px;
+    box-shadow: 8px 8px 16px rgb(87 87 87 / 40%),
+        -8px -8px 16px rgb(253 243 214 / 50%);
+    padding: 1.5rem;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.neumorphic-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 10px 10px 20px rgba(174, 174, 192, 0.5),
+        -10px -10px 20px rgba(255, 255, 255, 0.9);
+}
+
+.rank-badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 4px 4px 8px rgba(174, 174, 192, 0.4),
+        -4px -4px 8px rgba(255, 255, 255, 0.8);
+    z-index: 1;
+}
+
+.rank-badge span {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.winner-info {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-left: 50px;
+}
+
+.profile-section {
+    margin-right: 1.5rem;
+}
+
+.progress-circle-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+}
+
+.progress-circle {
+    width: 100px;
+    height: 100px;
+}
+
+.progress-bg {
+    fill: none;
+    stroke: #d1d9e6;
+    stroke-width: 6;
+}
+
+.progress-fill {
+    fill: none;
+    stroke: #4CAF50;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.profile-image-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: inset 4px 4px 8px rgba(174, 174, 192, 0.4),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+    padding: 3px;
+    background-color: #e6e7ee;
+}
+
+.profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.user-details {
+    flex-grow: 1;
+    padding-left: 1rem;
+    border-left: 2px solid rgba(174, 174, 192, 0.2);
+}
+
+.user-name {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    color: #023047;
+    font-weight: 700;
+}
+
+.user-email {
+    font-family: sans-serif;
+    margin: 0 0 1rem 0;
+    color: #45717b;
+    font-size: 1rem;
+}
+
+.progress-bar {
+    height: 12px;
+    width: 100%;
+    background-color: #d1d9e6;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 3px 3px 6px rgba(174, 174, 192, 0.4),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.progress-bar .progress-fill {
+    fill: none;
+    stroke: #8ECAE6;
+    stroke-width: 6;
+    stroke-linecap: round;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .winner-info {
+        flex-direction: column;
+        align-items: center;
+        margin-left: 30px;
+        margin-top: 20px;
+    }
+
+    .profile-section {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .user-details {
+        padding-left: 0;
+        border-left: none;
+        text-align: center;
+        width: 100%;
+    }
+
+    .rank-badge {
+        width: 60px;
+        height: 60px;
+    }
+
+    .rank-badge span {
+        font-size: 2rem;
+    }
+}
