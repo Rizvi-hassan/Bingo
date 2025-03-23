@@ -71,6 +71,7 @@ const Host = () => {
         }
     }
 
+    // generates a random string which is the unique room id
     const generateRoomId = () => {
         const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         let result = "";
@@ -83,6 +84,7 @@ const Host = () => {
         return result;
     }
 
+    // when host leaves room, the room is deleted and all players also get removed automatically
     const leaveRoom = () => {
         socket.emit('delete-room', room?.roomId);
         socket.disconnect();
@@ -106,6 +108,7 @@ const Host = () => {
         socket.emit('change-board-size', room?.roomId, val);
     }
 
+    
     const handleStart = ()=>{
         socket.emit('start', room?.roomId);
         navigate('/play');

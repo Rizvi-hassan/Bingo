@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './hero.css'
 import { Link, useNavigate } from 'react-router-dom'
 import UserContext from './../../Contexts/UserContext';
@@ -6,26 +6,35 @@ import { io } from 'socket.io-client'
 
 
 const Hero = () => {
+    // handles backend connectivity status
+    const [loadingHost, setLoadingHost] = useState(false);
+    const [loadingJoin, setLoadingJoin] = useState(false);
 
     const context = useContext(UserContext);
     const { user, saveUser, socket, setSocket, setPlayers} = context;
+    
     const navigate = useNavigate();
+    const url = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
-    const onConnect = () => {
+    // request server to create a new socket aka player
+    const onConnect = (path) => {
 
         if (!socket) {
-            const s = io('http://localhost:8080', { 
+            const s = io(url, { 
                 query: {name: user.name, 
                         image: user.image, 
                         email: user.email } 
             });
             setSocket(s);
             s.on('connect', () => {
-                console.log("conntected socket")
+                console.log("conntected socket");
+                (path === 'host') ? setLoadingHost(false) : setLoadingJoin(false);
+                navigate(`/${path}`);
             })
         }
     }
 
+    // handles join/host button event
     const enterLobby = (path)=>{
         if(!user){
             document.getElementById('login-btn').classList.add('shake');
@@ -36,10 +45,11 @@ const Hero = () => {
         }
 
         if(!socket){
-            onConnect();
+            (path === 'host')? setLoadingHost(true) : setLoadingJoin(true);
+            onConnect(path);
         } 
 
-        navigate(path);
+        // navigate(path);
     }
 
     useEffect(() => {
@@ -51,7 +61,7 @@ const Hero = () => {
         // console.log("user is...", user)
         if (!user) {
 
-            const data = localStorage.getItem('bingo-user-info');
+            const data = localStorage.getItem('bingo-user-info'); // fetches user info from localstorage, if present
             // console.log("data is...", data)
             if (data === null && !JSON.parse(data)?.token) {
                 saveUser(null);
@@ -76,8 +86,8 @@ const Hero = () => {
 
             </header>
             <div className="body-hero" id='hero-body'>
-                <button onClick={ ()=> enterLobby('/host') } className="btn">Host</button>
-                <button onClick={ ()=> enterLobby('/join') } className="btn">Join</button>
+                <button onClick={ ()=> enterLobby('host') } className="btn">{loadingHost? 'loading...': 'Host'}</button>
+                <button onClick={ ()=> enterLobby('join') } className="btn">{loadingJoin? 'loading...': 'Join'}</button>
                 <Link to='/me'  ><button className="btn">Me</button></Link>
                 {(user === null) && <div className="login-box">
                     <button className="login-btn" id='login-btn' onClick={() => { navigate('/login') }}>

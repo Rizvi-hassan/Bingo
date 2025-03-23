@@ -19,15 +19,20 @@ instrument(io, {
     auth: false
 })
 
-const availableSockets = {}
-const availableRooms = {}
+const availableSockets = {} // stores {email: {name, image, socketid} } - of all online sockets
+const availableRooms = {} // saves room info 
+
 
 io.on('connect', socket => {
+
+    // ---------------------------ROOM CREATION AND MANIPULATION CHAT------------------------------------------
+
     const { name, image, email } = socket.handshake.query
     availableSockets[email] = { name, image, socketId: socket.id };
     console.log("connected", email, availableSockets[email])
 
 
+    // creates a room variable and stores in availabelRooms
     socket.on('create-room', (room) => {
         // console.log(room);
         availableRooms[room.roomId] = room;
@@ -35,8 +40,10 @@ io.on('connect', socket => {
         console.log("players rooms: ", availableRooms[room.roomId].players);
     })
 
+    // handles player joining a room event 
     socket.on('join-room', (roomId, callback) => {
         const ids = Object.keys(availableRooms);
+
         if (ids.indexOf(roomId) === -1) {
             callback({ status: 'fail' })
         }
@@ -46,13 +53,13 @@ io.on('connect', socket => {
             availableRooms[roomId].players.push({ name, email, image });
 
             console.log("player added to room: ",roomId);   
-            socket.broadcast.to(roomId).emit('update-room', availableRooms[roomId]);
+            socket.broadcast.to(roomId).emit('update-room', availableRooms[roomId]); // inform other players that a new player has joined 
 
             callback({ status: 'success', room: availableRooms[roomId] });
         }
     })
 
-    // function to remove player from availableRooms(does not remove the player from the room)
+    // removes the player (email) from a current room
     const leave_room = (roomId, email)=>{
         if (Object.keys(availableRooms).indexOf(roomId) !== -1) {
             let players = availableRooms[roomId].players;
@@ -64,7 +71,7 @@ io.on('connect', socket => {
             // console.log('remaining players: ', remaining)
             availableRooms[roomId].players = remaining;
             console.log('player to delete', email, roomId);
-            socket.broadcast.to(roomId).emit('update-room', availableRooms[roomId]);
+            socket.broadcast.to(roomId).emit('update-room', availableRooms[roomId]); // inform other players that a player has left
 
         }
     }
@@ -72,8 +79,8 @@ io.on('connect', socket => {
     // when a player is kicked from the room
     socket.on('remove-player', (roomId, email)=>{
         leave_room(roomId, email);
-        socket.to(availableSockets[email].socketId).emit('kick-player');
-        socket.emit('update-room', availableRooms[roomId]);
+        socket.to(availableSockets[email].socketId).emit('kick-player'); // sends message to the player being kicked out.
+        socket.emit('update-room', availableRooms[roomId]); // this method is called in leave_room also, so not necessary to call again
     })
 
     // when a player wants to leave the room
@@ -83,6 +90,7 @@ io.on('connect', socket => {
         socket.leave(roomId);
     })
 
+    // when the host changes the board size, it informs other players in the room for an update 
     socket.on('change-board-size', (id, size) => {
         console.log('change board size to: ', id, size);
         if (Object.keys(availableRooms).indexOf(id) !== -1) {
@@ -92,6 +100,7 @@ io.on('connect', socket => {
         }
     })
 
+    // the host leaves the room so, room has to be deleted.
     socket.on('delete-room', (roomId) => {
         socket.broadcast.in(roomId).emit('room-deleted', roomId);
         io.in(roomId).socketsLeave(roomId);
@@ -100,7 +109,9 @@ io.on('connect', socket => {
     })
 
 
-//---------------- game logic chat---------------------------------
+//---------------- GAME LOCIC CHAT---------------------------------
+
+    // host starts the game. new variables in room is added to store current state of the game
     socket.on('start', (roomId)=>{
         // console.log('start', roomId);
         socket.broadcast.in(roomId).emit('start-game');
@@ -140,22 +151,23 @@ io.on('connect', socket => {
         console.log(socket.handshake.query.email,'`s move is',move);
         // availableRooms[roomId].played += 1;
         if(move !== 0){
-            socket.broadcast.in(roomId).emit('move-is', move);
+            socket.broadcast.in(roomId).emit('move-is', move); // when a player chooses a number, other players need to cross it within 5 sec
             let timer = setTimeout(()=>{
                 console.log('calling from timer')
-                nextMove(availableRooms[roomId]);
+                nextMove(availableRooms[roomId]); // next player`s turn after 5 sec
             },5000)
         }
-        else{
+        else{ // player did not select a moove (removed this part of event from the frontend)
             console.log('calling from outside timer')
             nextMove(availableRooms[roomId]);
         }
     })
 
+    // when only one player remains whose bingo is incomplete, then match ends
     socket.on('won-match', (roomId, user)=>{
         console.log(roomId, user);
         console.log(availableRooms[roomId]);
-        availableRooms[roomId].won.push(user);
+        availableRooms[roomId].won.push(user);     // won stores the players in order of their rank( first ranker at 0 index)
         let playing = availableRooms[roomId].playing;
         let remain = playing.filter((val)=>{
             return val?.email !== user.email;
@@ -165,13 +177,14 @@ io.on('connect', socket => {
     
     })
 
+    // when a player has filled his board and is ready to start the game
     socket.on('player-ready', (roomId)=>{
         console.log('player ready in: ', roomId);
         availableRooms[roomId].ready += 1;
-        if(availableRooms[roomId].players.length === availableRooms[roomId].ready)
+        if(availableRooms[roomId].players.length === availableRooms[roomId].ready) // checks if all players are ready, if yes then start cycling through next-player`s chance to pic a number
         {
             io.in(roomId).emit('all-ready');
-            console.log('calling from player-ready')
+            console.log('all player ready in room: ', roomId);
             nextMove(availableRooms[roomId]);
         }
         socket.broadcast.in(roomId).emit('iam-ready', socket.handshake.query.email);
@@ -179,7 +192,9 @@ io.on('connect', socket => {
 
 
 
-//-----------------------------------------------------------------------------------
+//------------------------------------HANDLES THE EVENT WHEN A SOCKET IS DISCONNECTED-----------------------------------------------
+
+    // player disconnected due to network issue or any other error
     socket.on('disconnect', () => {
         delete availableSockets[socket.id];
         let email = socket.handshake.query.email;

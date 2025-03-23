@@ -8,27 +8,6 @@ const Finish = () => {
   const { winners } = context;
   const navigate = useNavigate();
 
-  // Fallback data if winners is not available
-  const dummyWinners = [
-    {
-      rank: 1,
-      email: "rehanabano860@gmail.com",
-      image: "https://lh3.googleusercontent.com/a/ACg8ocIyehNPg8GU8M4l5bg8UJHs53_rQNq2UDEc6DsansaiHWLTT2pr=s96-c",
-      name: "Md Rizvi Hassan Ansari",
-    },
-    {
-      rank: 2,
-      email: "player2@example.com",
-      image: "https://lh3.googleusercontent.com/a/ACg8ocIyehNPg8GU8M4l5bg8UJHs53_rQNq2UDEc6DsansaiHWLTT2pr=s96-c",
-      name: "Player Two",
-    },
-    {
-      rank: 3,
-      email: "player3@example.com",
-      image: "https://lh3.googleusercontent.com/a/ACg8ocIyehNPg8GU8M4l5bg8UJHs53_rQNq2UDEc6DsansaiHWLTT2pr=s96-c",
-      name: "Player Three",
-    }
-  ];
 
   // Use winners from context if available, otherwise use dummy data
   const displayWinners = winners;
