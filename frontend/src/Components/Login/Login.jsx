@@ -12,6 +12,7 @@ const Login = () => {
     const context = useContext(UserContext);
     const {saveUser} = context;
     
+    // bug in login - when I try to login through phone, it refreshes the page after redirecting to google, which prevents it from sending requenst to backend
     const responseGoogle = async (authRes)=>{
         try {
             // console.log(authRes);

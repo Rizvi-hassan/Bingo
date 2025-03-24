@@ -110,7 +110,7 @@ const Lobby = () => {
                 <div className="box">
                     <div className="players">
                         {room?.players.map((val) => {
-                            return <Player key={val.email} id={val.name === user?.name ? 'You' : val.name} image={val.image}></Player>
+                            return <Player key={val.email} id={val.email === user?.email ? 'You ' : val.name} image={val.image}></Player>
                         })}
                     </div>
                 </div>

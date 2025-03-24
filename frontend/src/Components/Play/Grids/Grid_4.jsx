@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { checkBingo, check } from '../CheckBingo.mjs'
@@ -13,6 +13,17 @@ const Grid_4 = (props) => {
     ]);
     const [borderColor, setBorderColor] = useState('#023047')
     const { clickedNo, ready, no, myTurn, setBingo, bingo } = props;
+
+    useEffect(()=>{
+        if(myTurn){
+            setBorderColor('#8ee694');
+        }
+        else{
+            if(count > 16){
+                setBorderColor('#219EBC');
+            }
+        }
+    }, [myTurn])
 
     const handleClick = (row, col) => {
         // console.log(row, col, count);
@@ -60,7 +71,7 @@ const Grid_4 = (props) => {
     }
 
     let box_style = {
-        'border': '1px solid #8ECAE6',
+        'border': `1px solid ${borderColor}`,
         'fontSize': '2rem',
         'textAlign': 'center',
         'lineHeight': '2.4',

@@ -130,8 +130,12 @@ const Play = () => {
     }
 
     const clickedNo = (no) => {
+        document.getElementById('move').classList.remove('moveTimer');
         if(myTurn){
             sendMyMove(no);
+        }
+        else{
+            sendMyMove(0);
         }
 
     }
@@ -148,7 +152,7 @@ const Play = () => {
 
     const handleExit = () => {
         try {
-            socket.emit('delete-room', room?.roomId);
+            // socket.emit('delete-room', room?.roomId);
             socket.disconnect();
             setSocket(null);
             setRoom(null);

@@ -127,6 +127,7 @@ io.on('connect', socket => {
 
     // function to select next player for the move
     const nextMove = (room)=>{
+        room.played = 0;
         let playerlength = room.playing.length;
         if(playerlength === 1){
             console.log('Match finished: ', room?.roomId);
@@ -149,19 +150,23 @@ io.on('connect', socket => {
     // next-player selected a no
     socket.on('my-move', (roomId, move)=>{
         console.log(socket.handshake.query.email,'`s move is',move);
-        // availableRooms[roomId].played += 1;
+        availableRooms[roomId].played += 1;
         if(move !== 0){
             socket.broadcast.in(roomId).emit('move-is', move); // when a player chooses a number, other players need to cross it within 5 sec
-            let timer = setTimeout(()=>{
+            availableRooms[roomId].timer = setTimeout(()=>{
                 console.log('calling from timer')
                 nextMove(availableRooms[roomId]); // next player`s turn after 5 sec
             },5000)
         }
         else{ // player did not select a moove (removed this part of event from the frontend)
             console.log('calling from outside timer')
-            nextMove(availableRooms[roomId]);
+            if(availableRooms[roomId].played === availableRooms[roomId].players.length){
+                clearTimeout(availableRooms[roomId].timer);
+                nextMove(availableRooms[roomId]);
+            }
         }
     })
+
 
     // when only one player remains whose bingo is incomplete, then match ends
     socket.on('won-match', (roomId, user)=>{
@@ -199,12 +204,27 @@ io.on('connect', socket => {
         delete availableSockets[socket.id];
         let email = socket.handshake.query.email;
         console.log('email:', email);
+
         outer:
         for(id of Object.keys(availableRooms)){
             let room = availableRooms[id];
             for(player of room.players){
                 if(player.email === email){
                     console.log('leave room')
+                    // if the current player left, then change turn to another player
+                    if (room.playing[room.currentPlayer].email === email){
+                        nextMove(room);
+                    }
+
+                    // remove the player from playing list
+                    let playing = room.playing;
+                    let remain = playing.filter((val) => {
+                        return val?.email !== email;
+                    })
+                    room.playing = remain;
+                    room.currentPlayer -= 1;
+
+                    // remove the player from the room
                     leave_room(id, email);
                     break outer;
                 }

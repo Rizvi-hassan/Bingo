@@ -26,7 +26,7 @@ export const Player = (props) => {
           transform="rotate(-90 50 50)" />
       </svg>
       <img className='user-icon' src={`https://images.weserv.nl/?url=${encodeURIComponent(props.image)}`} alt="user icon" /><br />
-      <span className="player-name">{props.id.length <= 12 ? props.id : props.id.substr(0, 10) + "..."}</span>
+      <span className="player-name">{props.id.substring(0, props.id.indexOf(' '))}</span>
       {location.pathname === '/host' && user !== '' && <img onClick={()=> exitUser(user)} src={cross} className='cross-icon' alt="kick out" />}
     </div>
   )

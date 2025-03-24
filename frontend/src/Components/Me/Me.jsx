@@ -29,7 +29,7 @@ const Me = () => {
       <div className="logo">
         <img className='logo-img' src={`https://images.weserv.nl/?url=${encodeURIComponent(user?.image)}`} alt={user?.name} />
       </div>
-      <h1 style={{textAlign:'center'}}>{user?.name}</h1>
+      <h1 style={{textAlign:'center', fontSize:'larger'}}>{user?.name}</h1>
       <button className="login-btn" onClick={handleLogout}>Log Out</button>
       <button className="home-btn" onClick={()=> navigate('/')}>Home</button>
     </div>
