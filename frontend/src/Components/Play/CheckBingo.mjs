@@ -1,7 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
 
-const location = useLocation();
 
 let check = [
     [false, false, false, false, false, false],
@@ -13,7 +12,7 @@ let check = [
 ]
 
 // reset check grid for new games
-const resetCheck = ()=>{
+const resetCheck = () => {
     check = [
         [false, false, false, false, false, false],
         [false, false, false, false, false, false],
@@ -21,14 +20,13 @@ const resetCheck = ()=>{
         [false, false, false, false, false, false],
         [false, false, false, false, false, false],
         [false, false, false, false, false, false],
-        
+
     ]
 }
 
 // changes the color of crosses if row is complete
 const rowComplete = (row, col, size) => {
     // console.log('row', row, 'complete');
-    if(location.pathname('/finish')) return;
 
     let left = col;
     let right = col;
@@ -36,13 +34,17 @@ const rowComplete = (row, col, size) => {
     let interval = setInterval(() => {
         if (left >= 0) {
             // console.log(`cross${row}${left}`);
-            document.getElementById(`cross${row}${left}`).style.color = 'aqua';
-            document.getElementById(`cross${row}${left}`).style.fontSize = '3.5rem';
+            if (document.getElementById(`cross${row}${left}`)) {
+                document.getElementById(`cross${row}${left}`).style.color = 'aqua';
+                document.getElementById(`cross${row}${left}`).style.fontSize = '3.5rem';
+            }
             left -= 1;
         }
         if (right <= size - 1) {
-            document.getElementById(`cross${row}${right}`).style.color = 'aqua';
-            document.getElementById(`cross${row}${right}`).style.fontSize = '3.5rem';
+            if (document.getElementById(`cross${row}${right}`)) {
+                document.getElementById(`cross${row}${right}`).style.color = 'aqua';
+                document.getElementById(`cross${row}${right}`).style.fontSize = '3.5rem';
+            }
             right += 1;
         }
 
@@ -55,20 +57,23 @@ const rowComplete = (row, col, size) => {
 // changes the color of crosses if column is complete
 const colComplete = (row, col, size) => {
     // console.log('col', col, 'complete');
-    if (location.pathname('/finish')) return;
 
     let up = row;
     let down = row;
 
     let interval = setInterval(() => {
         if (up >= 0) {
-            document.getElementById(`cross${up}${col}`).style.color = 'aqua';
-            document.getElementById(`cross${up}${col}`).style.fontSize = '3.5rem';
+            if (document.getElementById(`cross${up}${col}`)) {
+                document.getElementById(`cross${up}${col}`).style.color = 'aqua';
+                document.getElementById(`cross${up}${col}`).style.fontSize = '3.5rem';
+            }
             up -= 1;
         }
         if (down <= size - 1) {
-            document.getElementById(`cross${down}${col}`).style.color = 'aqua';
-            document.getElementById(`cross${down}${col}`).style.fontSize = '3.5rem';
+            if (document.getElementById(`cross${down}${col}`)) {
+                document.getElementById(`cross${down}${col}`).style.color = 'aqua';
+                document.getElementById(`cross${down}${col}`).style.fontSize = '3.5rem';
+            }
             down += 1;
         }
 
@@ -79,20 +84,23 @@ const colComplete = (row, col, size) => {
 // changes the color of cross if primary diagonal is complete
 const primaryDiagComplete = (row, col, size) => {
     // console.log('primary diag complete');
-    if (location.pathname('/finish')) return;
 
     let d1 = row;
     let d2 = row;
 
     let interval = setInterval(() => {
         if (d1 >= 0) {
-            document.getElementById(`cross${d1}${d1}`).style.color = 'aqua';
-            document.getElementById(`cross${d1}${d1}`).style.fontSize = '3.5rem';
+            if (document.getElementById(`cross${d1}${d1}`)) {
+                document.getElementById(`cross${d1}${d1}`).style.color = 'aqua';
+                document.getElementById(`cross${d1}${d1}`).style.fontSize = '3.5rem';
+            }
             d1 -= 1;
         }
         if (d2 <= size - 1) {
-            document.getElementById(`cross${d2}${d2}`).style.color = 'aqua';
-            document.getElementById(`cross${d2}${d2}`).style.fontSize = '3.5rem';
+            if (document.getElementById(`cross${d2}${d2}`)) {
+                document.getElementById(`cross${d2}${d2}`).style.color = 'aqua';
+                document.getElementById(`cross${d2}${d2}`).style.fontSize = '3.5rem';
+            }
             d2 += 1;
         }
 
@@ -101,20 +109,23 @@ const primaryDiagComplete = (row, col, size) => {
 }
 
 const secDiagComplete = (row, col, size) => {
-    if (location.pathname('/finish')) return;
 
     let d1 = row;
     let d2 = row;
 
     let interval = setInterval(() => {
         if (d1 >= 0) {
-            document.getElementById(`cross${d1}${size - 1 - d1}`).style.color = 'aqua';
-            document.getElementById(`cross${d1}${size - 1 - d1}`).style.fontSize = '3.5rem';
+            if (document.getElementById(`cross${d1}${size - 1 - d1}`)) {
+                document.getElementById(`cross${d1}${size - 1 - d1}`).style.color = 'aqua';
+                document.getElementById(`cross${d1}${size - 1 - d1}`).style.fontSize = '3.5rem';
+            }
             d1 -= 1;
         }
         if (d2 <= size - 1) {
-            document.getElementById(`cross${d2}${size - 1 - d2}`).style.color = 'aqua';
-            document.getElementById(`cross${d2}${size - 1 - d2}`).style.fontSize = '3.5rem';
+            if (document.getElementById(`cross${d2}${size - 1 - d2}`)) {
+                document.getElementById(`cross${d2}${size - 1 - d2}`).style.color = 'aqua';
+                document.getElementById(`cross${d2}${size - 1 - d2}`).style.fontSize = '3.5rem';
+            }
             d2 += 1;
         }
 
