@@ -1,4 +1,7 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
+
+const location = useLocation();
 
 let check = [
     [false, false, false, false, false, false],
@@ -25,6 +28,8 @@ const resetCheck = ()=>{
 // changes the color of crosses if row is complete
 const rowComplete = (row, col, size) => {
     // console.log('row', row, 'complete');
+    if(location.pathname('/finish')) return;
+
     let left = col;
     let right = col;
 
@@ -50,6 +55,8 @@ const rowComplete = (row, col, size) => {
 // changes the color of crosses if column is complete
 const colComplete = (row, col, size) => {
     // console.log('col', col, 'complete');
+    if (location.pathname('/finish')) return;
+
     let up = row;
     let down = row;
 
@@ -72,6 +79,8 @@ const colComplete = (row, col, size) => {
 // changes the color of cross if primary diagonal is complete
 const primaryDiagComplete = (row, col, size) => {
     // console.log('primary diag complete');
+    if (location.pathname('/finish')) return;
+
     let d1 = row;
     let d2 = row;
 
@@ -92,6 +101,8 @@ const primaryDiagComplete = (row, col, size) => {
 }
 
 const secDiagComplete = (row, col, size) => {
+    if (location.pathname('/finish')) return;
+
     let d1 = row;
     let d2 = row;
 
