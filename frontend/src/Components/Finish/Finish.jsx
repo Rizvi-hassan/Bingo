@@ -1,13 +1,18 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import UserContext from '../../Contexts/UserContext';
 import './Finish.css';
 import { useNavigate } from 'react-router-dom';
 
 const Finish = () => {
   const context = useContext(UserContext);
-  const { winners } = context;
+  const {socket, winners, setSocket, setRoom } = context;
   const navigate = useNavigate();
 
+  useState(()=>{
+    if(!winners){
+      navigate('/');
+    }
+  })
 
   // Use winners from context if available, otherwise use dummy data
   const displayWinners = winners;
@@ -23,6 +28,15 @@ const Finish = () => {
   };
 
 
+  const handleExit = ()=>{
+    if(socket){
+      socket.disconnect();
+      setSocket(null);
+      setRoom(null);
+    }
+
+    navigate('/');
+  }
 
   return (
     <div className="finish-container">
@@ -72,7 +86,7 @@ const Finish = () => {
         })}
       </div>
 
-      <button className='btn' onClick={()=> navigate('/')}>Home</button>
+      <button className='btn' onClick={handleExit}>Home</button>
     </div>
   );
 };

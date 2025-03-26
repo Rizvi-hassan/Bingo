@@ -72,12 +72,11 @@ const Lobby = () => {
     const boardMap = { 4: 'four', 5: 'five', 6: 'six' }
     const changeBoardSize = (val) => {
 
+        if (document.getElementById(boardMap[4])) document.getElementById(boardMap[4]).classList.remove('select-diff');
+        if (document.getElementById(boardMap[5])) document.getElementById(boardMap[5]).classList.remove('select-diff');
+        if (document.getElementById(boardMap[6])) document.getElementById(boardMap[6]).classList.remove('select-diff');
 
-        document.getElementById(boardMap[4]).classList.remove('select-diff');
-        document.getElementById(boardMap[5]).classList.remove('select-diff');
-        document.getElementById(boardMap[6]).classList.remove('select-diff');
-
-        document.getElementById(boardMap[val]).classList.add('select-diff');
+        if (document.getElementById(boardMap[val])) document.getElementById(boardMap[val]).classList.add('select-diff');
 
     }
 

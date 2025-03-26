@@ -29,7 +29,7 @@ io.on('connect', socket => {
 
     const { name, image, email } = socket.handshake.query
     availableSockets[email] = { name, image, socketId: socket.id };
-    console.log("connected", email, availableSockets[email])
+    // console.log("connected", email, availableSockets[email])
 
 
     // creates a room variable and stores in availabelRooms
@@ -37,7 +37,7 @@ io.on('connect', socket => {
         // console.log(room);
         availableRooms[room.roomId] = room;
         socket.join(room.roomId)
-        console.log("players rooms: ", availableRooms[room.roomId].players);
+        // console.log("players rooms: ", availableRooms[room.roomId].players);
     })
 
     // handles player joining a room event 
@@ -52,7 +52,7 @@ io.on('connect', socket => {
             const { name, email, image } = socket.handshake.query
             availableRooms[roomId].players.push({ name, email, image });
 
-            console.log("player added to room: ",roomId);   
+            // console.log("player added to room: ",roomId);   
             socket.broadcast.to(roomId).emit('update-room', availableRooms[roomId]); // inform other players that a new player has joined 
 
             callback({ status: 'success', room: availableRooms[roomId] });
@@ -60,7 +60,7 @@ io.on('connect', socket => {
     })
 
     // removes the player (email) from a current room
-    const leave_room = (roomId, email)=>{
+    const leave_room = (roomId, email) => {
         if (Object.keys(availableRooms).indexOf(roomId) !== -1) {
             let players = availableRooms[roomId].players;
             // console.log('players: ', players)
@@ -77,7 +77,7 @@ io.on('connect', socket => {
     }
 
     // when a player is kicked from the room
-    socket.on('remove-player', (roomId, email)=>{
+    socket.on('remove-player', (roomId, email) => {
         leave_room(roomId, email);
         socket.to(availableSockets[email].socketId).emit('kick-player'); // sends message to the player being kicked out.
         socket.emit('update-room', availableRooms[roomId]); // this method is called in leave_room also, so not necessary to call again
@@ -109,95 +109,136 @@ io.on('connect', socket => {
     })
 
 
-//---------------- GAME LOCIC CHAT---------------------------------
+    //---------------- GAME LOCIC CHAT---------------------------------
 
     // host starts the game. new variables in room is added to store current state of the game
-    socket.on('start', (roomId)=>{
+    socket.on('start', (roomId) => {
         // console.log('start', roomId);
-        socket.broadcast.in(roomId).emit('start-game');
         let room = availableRooms[roomId]
-        room['ready'] = 0;
-        room['currentPlayer'] = 0;
-        room['played'] = 0;
-        room['playing'] = room['players'];
-        room['won'] = [];
+        room['ready'] = 0; // number of players ready with their board
+        room['played'] = 0; // number of players played their move
+        room['playing'] = room['players']; // current playing players queue, first one is the current player
+        room['won'] = []; // array to store the winners in there winning order
+        room['move'] = 0; // holds the current move, if selected else 0
         availableRooms[roomId] = room;
-        console.log('start: ',availableRooms[roomId]);
+        socket.broadcast.in(roomId).emit('start-game');
+        // console.log('start: ',availableRooms[roomId]);
     })
 
-    // function to select next player for the move
-    const nextMove = (room)=>{
-        room.played = 0;
-        let playerlength = room.playing.length;
-        if(playerlength === 1){
-            console.log('Match finished: ', room?.roomId);
-            room.won.push(room.playing[0]);
-            console.log('room:', room);
-            io.in(room?.roomId).emit('match-finished', room.won);
-            io.in(room?.roomId).socketsLeave(room?.roomId);
-            return;
-        }
-        let currPlayer = room.currentPlayer;
-        currPlayer = (currPlayer + 1) % playerlength;
+    // a player in the room is ready
+    socket.on('ready', (roomId, email) => {
+        availableRooms[roomId].ready += 1;
 
-        let mail = room.playing[currPlayer].email;
-        let socketId = availableSockets[mail].socketId;
-        console.log('sending turn to: ', mail, socketId);
-        availableRooms[room.roomId].currentPlayer = currPlayer;
-        io.to(socketId).emit('your-turn');
+        socket.broadcast.in(roomId).emit('i-am-ready', email);
+        // check if all players are ready
+
+        if (availableRooms[roomId].ready === availableRooms[roomId].playing.length) {
+            selectTurn(roomId);
+        }
+    })
+
+
+    // select a player to play its turn
+    const selectTurn = (roomId) => {
+
+        // choosing the first player of playing list as current player
+        if (availableRooms[roomId].playing.length > 0) {
+            let currentPlayer = availableRooms[roomId].playing[0];
+            // console.log('selecting player: ', currentPlayer);
+            io.in(roomId).emit('player-turn', currentPlayer.email);
+            availableRooms[roomId].move = 0;
+        } else {
+            // no player is in playing list
+            console.log('no player in playing list');
+        }
     }
 
-    // next-player selected a no
-    socket.on('my-move', (roomId, move)=>{
-        console.log(socket.handshake.query.email,'`s move is',move);
+
+    // recieves player`s move
+    socket.on('my-move', (roomId, move, mail) => {
+        if (move !== 0) {
+            // if move != 0 player was selected for move and his move is move
+            // boradcast this move to all other players
+            socket.broadcast.in(roomId).emit('current-move', move, mail);
+
+            // setting current move
+            availableRooms[roomId].move = move;
+        }
+        else {
+            // if move == 0 player has played the current move
+            socket.broadcast.in(roomId).emit('move-played', mail);
+        }
+        // as 1 player played  
         availableRooms[roomId].played += 1;
-        if(move !== 0){
-            socket.broadcast.in(roomId).emit('move-is', move); // when a player chooses a number, other players need to cross it within 5 sec
-            availableRooms[roomId].timer = setTimeout(()=>{
-                console.log('calling from timer')
-                nextMove(availableRooms[roomId]); // next player`s turn after 5 sec
-            },5000)
-        }
-        else{ // player did not select a moove (removed this part of event from the frontend)
-            console.log('calling from outside timer')
-            if(availableRooms[roomId].played === availableRooms[roomId].players.length){
-                clearTimeout(availableRooms[roomId].timer);
-                nextMove(availableRooms[roomId]);
-            }
-        }
+
+        // check if all players played
+        checkPlayed(roomId);
     })
 
+    // a player won match
+    socket.on('won-match', (roomId, user) => {
 
-    // when only one player remains whose bingo is incomplete, then match ends
-    socket.on('won-match', (roomId, user)=>{
-        console.log(roomId, user);
-        console.log(availableRooms[roomId]);
-        availableRooms[roomId].won.push(user);     // won stores the players in order of their rank( first ranker at 0 index)
+        // removing the player from playing queue
         let playing = availableRooms[roomId].playing;
-        let remain = playing.filter((val)=>{
-            return val?.email !== user.email;
+        let remain = playing.filter((val) => {
+            return val.email !== user.email;
         })
         availableRooms[roomId].playing = remain;
-        socket.in(roomId).emit('bingo', (user.email));
-    
+
+
+        // adding player to won queue
+        availableRooms[roomId].won.push(user);
+
+        console.log('Player:', user.email, 'won\nRemaining players: ', availableRooms[roomId].playing);
     })
 
-    // when a player has filled his board and is ready to start the game
-    socket.on('player-ready', (roomId)=>{
-        console.log('player ready in: ', roomId);
-        availableRooms[roomId].ready += 1;
-        if(availableRooms[roomId].players.length === availableRooms[roomId].ready) // checks if all players are ready, if yes then start cycling through next-player`s chance to pic a number
-        {
-            io.in(roomId).emit('all-ready');
-            console.log('all player ready in room: ', roomId);
-            nextMove(availableRooms[roomId]);
+
+    // check if all players played move
+    const checkPlayed = (roomId) => {
+        // console.log('checking if all played\n', availableRooms[roomId])
+        let played = availableRooms[roomId].played;
+        if (played >= availableRooms[roomId].playing.length) {
+            // all players played, reset played for next round
+            availableRooms[roomId].played = 0;
+            checkBingo(roomId);
         }
-        socket.broadcast.in(roomId).emit('iam-ready', socket.handshake.query.email);
-    })
+        // else not all player played - wait
+    }
+
+    // check if all player won
+    const checkBingo = (roomId) => {
+        console.log('checking for bingo')
+        if (availableRooms[roomId].playing.length > 1) {
+            // game is not finished
+            // select another player for turn from playing queue
+            let currentPlayer = availableRooms[roomId].playing.shift(0);
+            availableRooms[roomId].playing.push(currentPlayer);
+
+
+            console.log('\n selecting next player\n', availableRooms[roomId])
+            // call player-turn
+            selectTurn(roomId);
+        }
+        else {
+            // game is finished
+
+            // push the last playing player in won queue
+            let remainPlayer = availableRooms[roomId].playing.shift();
+            if (remainPlayer) {
+                availableRooms[roomId].won.push(remainPlayer);
+            }
+
+            io.in(roomId).emit('match-finish', availableRooms[roomId].won);
+
+            // delete the room and remove all sockets
+            io.socketsLeave(roomId);
+            delete availableRooms[roomId];
+        }
+    }
 
 
 
-//------------------------------------HANDLES THE EVENT WHEN A SOCKET IS DISCONNECTED-----------------------------------------------
+    //------------------------------------HANDLES THE EVENT WHEN A SOCKET IS DISCONNECTED-----------------------------------------------
 
     // player disconnected due to network issue or any other error
     socket.on('disconnect', () => {
@@ -206,23 +247,42 @@ io.on('connect', socket => {
         console.log('email:', email);
 
         outer:
-        for(id of Object.keys(availableRooms)){
+        for (id of Object.keys(availableRooms)) {
             let room = availableRooms[id];
-            for(player of room.players){
-                if(player.email === email){
+            for (player of room.players) {
+                if (player.email === email) {
                     console.log('leave room')
-                    // if the current player left, then change turn to another player
-                    if (room.playing[room.currentPlayer].email === email){
-                        nextMove(room);
+                    // if the current player left 
+                    if (availableRooms[id].playing[0] && availableRooms[id].playing[0].email === email ) {
+                        availableRooms[id].playing.shift();
+                        // if all players are not ready, no need to go for select turn
+                        if (room.ready >= room.playing.length) {
+
+                            // if player had not selected turn
+                            if (availableRooms[id].move === 0){
+                                selectTurn(id);
+                            }
+                            else{
+                                // player selected a turn - reduce played count by 1 and call checkedPlayed
+                                availableRooms[id].played -= 1;
+                                checkPlayed(id);
+                            }
+                        }
+                    }
+                    else {
+                        // the disconnected player is not current player
+
+                        // remove him from playing list and check if all remaining players played or not
+                        let remain = availableRooms[id].playing.filter((val) => {
+                            return val.email !== email
+                        })
+                        availableRooms[id].playing = remain;
+                        // if all players are not ready, no need to go for  checkPlayed
+                        if (room.ready >= room.playing.length) {
+                            checkPlayed(id);
+                        }
                     }
 
-                    // remove the player from playing list
-                    let playing = room.playing;
-                    let remain = playing.filter((val) => {
-                        return val?.email !== email;
-                    })
-                    room.playing = remain;
-                    room.currentPlayer -= 1;
 
                     // remove the player from the room
                     leave_room(id, email);

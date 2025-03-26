@@ -16,12 +16,11 @@ const Play = () => {
     const { user, room, socket, setSocket, setRoom, setWinners } = context;
 
 
-    const [ready, isReady] = useState(false);
+    const [ready, isReady] = useState(false); // holds if a player is ready or not
     const [no, setNo] = useState(0);
     const [myTurn, setMyTurn] = useState(false);
     const [bingo, setBingo] = useState(0);
-
-    // declaring timer as global
+    const [won, setWon] = useState(false);
 
     useEffect(() => {
         if (!user || !room || !socket) {
@@ -33,111 +32,103 @@ const Play = () => {
 
         if (socket) {
 
-            socket.on('your-turn', () => {
-                // console.log("my turn");
-                setMyTurn(true);
-                // document.getElementById(user?.email).classList.add('logoTimer');
-                document.getElementById(user?.email).style.stroke ='#8ee694'
+            // there is a change in players - update it
+            socket.on('update-room', (newRoom)=>{
+                // console.log('updating room: ', newRoom);
+                setRoom(newRoom);
+            })
+
+            // a player is ready - change its icon border to ready color
+            socket.on('i-am-ready', (who)=>{
+                // setting color of player circle to blue
+                document.getElementById(who).classList.remove('not-ready'); 
+                document.getElementById(who).classList.add('ready');
+
+            })
+            
+            // a player is selected for turn
+            socket.on('player-turn', (who)=>{
+                console.log('player turn in room: ', room);
+                // setting all player`s circle color to blue (not ready)
                 
+                for(let player of room?.players){
+                    console.log(player);
+                    if ( document.getElementById(player?.email) ){
+                        document.getElementById(player?.email).style.stroke = '#219EBC'
+                    }
+                }
+
+                // setting the circle color of player`s turn to white
+                document.getElementById(who).style.stroke = 'white';
+
+                // if I am the current player then set my turn to true
+                if(user?.email === who){
+                    setMyTurn(true);
+                }
             })
 
-            socket.on('all-ready', () => {
-                // console.log('all ready');
-            })
-
-            // if a user is ready, its status is recieved here to mark its icon ready
-            socket.on('iam-ready', (email) => {
-                // console.log(email, 'is ready');
-                document.getElementById(email).classList.remove('not-ready');
-                document.getElementById(email).classList.add('ready');
-            })
-
-            // this recieves the move which was called. I have to play the move
-            socket.on('move-is', (move)=>{
-                // console.log('current move is: ', move);
+            // player recieves the current move
+            socket.on('current-move', (move, email)=>{
+                document.getElementById(email).style.stroke = '#8ee694'
                 setNo(move);
-                document.getElementById('move').classList.add('moveTimer');    
-                setTimeout(()=>{
-                    document.getElementById('move').classList.remove('moveTimer');   
-                }, 5000)
             })
 
-            // player has done bingo
-            socket.on('bingo', (who)=>{
-                // console.log('BINGO: ****', who, '***');
+            // inform player that other player has played move
+            socket.on('move-played', (who)=>{
+                document.getElementById(who).style.stroke = '#8ee694'
             })
 
-            // match is finished
-            socket.on('match-finished', (winners)=>{
-                // console.log('match finished', winners);
+            // match has finished
+            socket.on('match-finish', winners=>{
                 setWinners(winners);
-                socket.disconnect();
-                setSocket(null);
-                setRoom(null);
                 navigate('/finish');
             })
         }
     }, [])
 
 
-    // this is a usefull comment. If we want that a user has limited time to choose a number.
-    // useEffect(() => {
-    //     let timerId;
-    //     if(myTurn){
-    //         timerId = setTimeout(() => {
-    //             console.log('I did not select a move:', myTurn);
-    //             if (myTurn) sendMyMove(0);
-    //         }, 10000);
-    //     }
-
-    //     return () => {
-    //         if(myTurn) clearInterval(timerId);
-    //     };
-    // }, [myTurn]);
-
-
-    useEffect(()=>{
-        
+    // if there is a line complete, cut a letter of bingo
+    useEffect(()=>{     
         if(bingo > 0){
-            for (let i = 1; i <= bingo; i++) {
+            for (let i = 1; i <= Math.min(bingo, room?.boardSize); i++) {
                 document.getElementById(`letter${i}`).classList.add('letter-active');
             }
         }
 
         if(bingo >= room?.boardSize){
-            console.log('--------------------------------')
-            console.log('Won the match!!: ');
-            console.log('--------------------------------')
-            console.log(room?.roomId);
-            socket.emit('won-match', room?.roomId, user);
+            // if match won by me
+            if(!won){
+                socket.emit('won-match', room?.roomId, user);
+                setWon(true);
+            }
         }
     }, [bingo])
 
 
     const sendMyMove = (move)=>{
         setNo(move);
-        socket.volatile.emit('my-move', room?.roomId, move);
-        document.getElementById(user?.email).style.stroke ='#8ECAE6';
+        socket.volatile.emit('my-move', room?.roomId, move, user?.email);
+        document.getElementById(user?.email).style.stroke ='#8ee694';
         setMyTurn(false);
     }
 
+    // I am ready and sending signal to server
     const setPlayerReady = () => {
         // console.log('player ready')
         document.getElementById(user?.email).classList.remove('not-ready');
         document.getElementById(user?.email).classList.add('ready');
-        socket.emit('player-ready', room?.roomId);
+        socket.emit('ready', room?.roomId, user?.email);
         isReady(true);
     }
 
     const clickedNo = (no) => {
-        document.getElementById('move').classList.remove('moveTimer');
         if(myTurn){
             sendMyMove(no);
         }
         else{
             sendMyMove(0);
         }
-
+        setNo(0);
     }
 
     const renderGrid = (size) => {
