@@ -189,6 +189,9 @@ io.on('connect', socket => {
         // adding player to won queue
         availableRooms[roomId].won.push(user);
 
+        // if won player is the current player then select next move
+        selectTurn(roomId);
+
         console.log('Player:', user.email, 'won\nRemaining players: ', availableRooms[roomId].playing);
     })
 

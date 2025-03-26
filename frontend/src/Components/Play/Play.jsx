@@ -83,6 +83,9 @@ const Play = () => {
                 setWinners(winners);
                 navigate('/finish');
             })
+
+            // inform others that 1 player won
+            //color of winning player #ff5a99
         }
     }, [])
 
