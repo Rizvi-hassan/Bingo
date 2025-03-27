@@ -132,6 +132,8 @@ io.on('connect', socket => {
         socket.broadcast.in(roomId).emit('i-am-ready', email);
         // check if all players are ready
 
+        console.log('player ready in room: ', availableRooms[roomId])
+
         if (availableRooms[roomId].ready === availableRooms[roomId].playing.length) {
             selectTurn(roomId);
         }
@@ -192,7 +194,7 @@ io.on('connect', socket => {
         // if won player is the current player then select next move
         checkBingo(roomId);
 
-        console.log('Player:', user.email, 'won\nRemaining players: ', availableRooms[roomId].playing);
+        // console.log('Player:', user.email, 'won\nRemaining players: ', availableRooms[roomId].playing);
     })
 
 
