@@ -1,4 +1,6 @@
 import React from 'react'
+
+import dash from './../../assets/images/numbers/null.png'
 import ten from './../../assets/images/numbers/10.png'
 import nine from './../../assets/images/numbers/09.png'
 import eight from './../../assets/images/numbers/08.png'
@@ -37,9 +39,9 @@ import thirtyfour from './../../assets/images/numbers/34.png'
 import thirtyfive from './../../assets/images/numbers/35.png'
 import thirtysix from './../../assets/images/numbers/36.png'
 
-const Number = [zero, one, two, three, four, five, six, seven, eight, nine, ten, eleven, 
+const Number = [dash, one, two, three, four, five, six, seven, eight, nine, ten, eleven, 
     twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty,
     twentyone, twentytwo, twentythree, twentyfour, twentyfive, twentysix, twentyseven, twentyeight, twentynine, thirty,
-    thirtyone, thirtytwo, thirtythree, thirtythree, thirtyfour, thirtyfive, thirtysix
+    thirtyone, thirtytwo, thirtythree, thirtyfour, thirtyfive, thirtysix
 ];
 export default Number

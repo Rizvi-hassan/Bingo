@@ -60,7 +60,7 @@ const Join = () => {
         <div className="box">
           <p>Enter Room Id:</p>
           <input type="text" name='id' className="roomid" id='id' value={roomId} onChange={handleChange} />
-          {invalid && <label htmlFor='id' style={{color:'red'}}>Room does not exist</label>}
+          {invalid && <label htmlFor='id' style={{color:'red'}}>Unable to join room</label>}
         </div>
         <div className="box">
           <button className='btn' onClick={handelJoin} >Join</button>

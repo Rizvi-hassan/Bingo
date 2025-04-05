@@ -47,6 +47,10 @@ io.on('connect', socket => {
         if (ids.indexOf(roomId) === -1) {
             callback({ status: 'fail' })
         }
+        else if(availableRooms[roomId].playing){
+            // game started
+            callback({status: 'fail'})
+        }
         else {
             socket.join(roomId);
             const { name, email, image } = socket.handshake.query
@@ -187,6 +191,8 @@ io.on('connect', socket => {
         })
         availableRooms[roomId].playing = remain;
 
+        // inform others that player won
+        socket.broadcast.in(roomId).emit('player-won', user.email);
 
         // adding player to won queue
         availableRooms[roomId].won.push(user);
@@ -194,7 +200,6 @@ io.on('connect', socket => {
         // if won player is the current player then select next move
         checkBingo(roomId);
 
-        // console.log('Player:', user.email, 'won\nRemaining players: ', availableRooms[roomId].playing);
     })
 
 

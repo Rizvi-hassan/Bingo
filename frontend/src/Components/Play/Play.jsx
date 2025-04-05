@@ -41,6 +41,7 @@ const Play = () => {
             // a player is ready - change its icon border to ready color
             socket.on('i-am-ready', (who)=>{
                 // setting color of player circle to blue
+                console.log('player is ready');
                 document.getElementById(who).classList.remove('not-ready'); 
                 document.getElementById(who).classList.add('ready');
 
@@ -69,7 +70,9 @@ const Play = () => {
 
             // player recieves the current move
             socket.on('current-move', (move, email)=>{
+                console.log('current move is', move);
                 document.getElementById(email).style.stroke = '#8ee694'
+                document.getElementById('move').style.transform = 'translateY(0px)'
                 setNo(move);
             })
 
@@ -85,7 +88,10 @@ const Play = () => {
             })
 
             // inform others that 1 player won
-            //color of winning player #ff5a99
+            //color of winning player #e4ff00
+            socket.on('player-won', (email)=>{
+                document.getElementById(email).style.stroke = '#e4ff00'
+            })
         }
     }, [])
 
@@ -101,6 +107,8 @@ const Play = () => {
         if(bingo >= room?.boardSize){
             // if match won by me
             if(!won){
+                console.log('I won')
+                document.getElementById(user?.email).style.stroke = '#e4ff00'
                 socket.emit('won-match', room?.roomId, user);
                 setWon(true);
             }
@@ -109,6 +117,7 @@ const Play = () => {
 
 
     const sendMyMove = (move)=>{
+        console.log('sending my move: ', move);
         setNo(move);
         socket.volatile.emit('my-move', room?.roomId, move, user?.email);
         document.getElementById(user?.email).style.stroke ='#8ee694';
@@ -117,7 +126,7 @@ const Play = () => {
 
     // I am ready and sending signal to server
     const setPlayerReady = () => {
-        // console.log('player ready')
+        console.log('I am ready: ');
         document.getElementById(user?.email).classList.remove('not-ready');
         document.getElementById(user?.email).classList.add('ready');
         socket.emit('ready', room?.roomId, user?.email);
@@ -131,6 +140,7 @@ const Play = () => {
         else{
             sendMyMove(0);
         }
+        document.getElementById('move').style.transform = 'translateY(100%)'
         setNo(0);
     }
 
@@ -178,7 +188,7 @@ const Play = () => {
             </div>
             <div className="timer" >
                 <span className='moving' id='move'></span>
-                <img src={Number[no]} alt="Time" style={{position:'relative', height:'100%'}}/>
+                <img src={Number[no]} alt="Time" style={{position:'relative', width:'75%'}}/>
                 </div>
             <div className="status">
                 {!ready? <span>Click on the boxes to fill them</span> : myTurn? <span style={{background:'beige'}}>Your Turn to pick a number.</span>:<span>Wait for other player`s move</span>}

@@ -142,7 +142,7 @@ const Host = () => {
                 <div className="box">
                     <div className="players">
                         {room?.players.map((val) => {
-                            return <Player key={val.email} user={val.email === user?.email ? '' : val.email} id={val.email ===  user?.email ? 'You ':val.name} image={val.image} exitUser={handleExit} ></Player>
+                            return <Player key={val.email} user={val.email === user?.email ? '' : val.email} id='' image={val.image} exitUser={handleExit} ></Player>
                         })}
                     </div>
                 </div>

@@ -80,5 +80,7 @@
 
 
 @media screen and (max-width: 560px) {
-
+    .host .body .box{
+        width: 70%;
+    }
 }

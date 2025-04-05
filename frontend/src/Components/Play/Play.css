@@ -61,6 +61,10 @@
     padding: 1rem;
     overflow: hidden;
     height: 6rem;
+    width: 7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .play .timer .moving {
@@ -72,6 +76,7 @@
     left: 0;
     background: #8ECAE6;
     transform: translateY(100%);
+    transition: transform 500ms ease;
 }
 
 .moveTimer {
@@ -160,7 +165,4 @@
 
     }
 
-    .play .timer img {
-        height: 3rem;
-    }
 }
