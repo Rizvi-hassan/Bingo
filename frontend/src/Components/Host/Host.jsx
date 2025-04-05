@@ -1,15 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faClipboard } from '@fortawesome/free-regular-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faClipboard } from '@fortawesome/free-regular-svg-icons'
+import {faCheck} from '@fortawesome/free-solid-svg-icons'
 import './host.css'
 import UserContext from '../../Contexts/UserContext';
 import { Player } from './../Play/Player';
+import { useClipboard } from 'react-haiku';
 
 const Host = () => {
 
     const [boardSize, setBoardSize] = useState(5);
     const [roomId, setRoomId] = useState(null);
+    const clipboard = useClipboard({timeout: 2000})
 
     const context = useContext(UserContext);
     const { user, socket, setSocket, room, setRoom } = context;
@@ -137,12 +140,13 @@ const Host = () => {
                     <p>Room Id:</p>
                     <div>
                         <span className="room-id">{room?.roomId}</span>
+                        <span className="copy" onClick={()=>{clipboard.copy(room?.roomId)}}><FontAwesomeIcon icon={clipboard.copied? faCheck :faClipboard}></FontAwesomeIcon></span>
                     </div>
                 </div>
                 <div className="box">
                     <div className="players">
                         {room?.players.map((val) => {
-                            return <Player key={val.email} user={val.email === user?.email ? '' : val.email} id={val.email ===  user?.email ? 'You ':val.name} image={val.image} exitUser={handleExit} ></Player>
+                            return <Player key={val.email} user={val.email === user?.email ? '' : val.email} id='' image={val.image} exitUser={handleExit} ></Player>
                         })}
                     </div>
                 </div>

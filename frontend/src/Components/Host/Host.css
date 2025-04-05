@@ -53,11 +53,9 @@
     font-size: 20px;
     border-radius: 8px;
     transition: scale 100ms ease;
+    cursor: pointer;
 }
 
-.host .body .box .copy:active{
-    scale: 0.9;
-}
 
 
 .host .body .box .btn-player {
@@ -80,5 +78,7 @@
 
 
 @media screen and (max-width: 560px) {
-
+    .host .body .box{
+        width: 70%;
+    }
 }
