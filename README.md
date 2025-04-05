@@ -3,12 +3,13 @@
 This is an online multiplayer bingo which can be played with friends.  
 Try out by clicking [here](https://bingo-multiplayer.netlify.app/)
 
-
 ## Technologies used
 - Vite+React - to develop frontend
 - Node - backend
 - Express - routing
 - Socket.io - game status
+
+<br>
 
 
 ## Folder Structure
@@ -85,6 +86,19 @@ frontend/
 │   └── main.jsx
 ├── index.html
 ```
+<br>
 
-## Google Authenticatiton flow
-![My Cool SVG](./frontend/src/assets/google%20auth%20flow.svg)
+## Google Authenticatiton Flow
+![Google auth flow diagram](./frontend/src/assets/google%20auth%20flow.svg)
+
+<br>
+
+
+## Lobby Control Flow
+![Lobby flow diagram](./frontend/src/assets/lobby%20control%20flow.svg)
+
+<br>
+
+## Game Control Flow
+![Game flow diagram](./frontend/src/assets/game%20control%20flow.svg)
+
