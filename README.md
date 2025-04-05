@@ -3,7 +3,6 @@
 This is an online multiplayer bingo which can be played with friends.  
 Try out by clicking [here](https://bingo-multiplayer.netlify.app/)
 
-
 ## Technologies used
 - Vite+React - to develop frontend
 - Node - backend
@@ -11,6 +10,7 @@ Try out by clicking [here](https://bingo-multiplayer.netlify.app/)
 - Socket.io - game status
 
 <br>
+
 
 ## Folder Structure
 
@@ -86,7 +86,6 @@ frontend/
 │   └── main.jsx
 ├── index.html
 ```
-
 <br>
 
 ## Google Authenticatiton Flow
@@ -102,3 +101,4 @@ frontend/
 
 ## Game Control Flow
 ![Game flow diagram](./frontend/src/assets/game%20control%20flow.svg)
+
