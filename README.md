@@ -89,11 +89,16 @@ frontend/
 
 <br>
 
-## Google Authenticatiton flow
+## Google Authenticatiton Flow
 ![Google auth flow diagram](./frontend/src/assets/google%20auth%20flow.svg)
 
 <br>
 
 
-## Google Authenticatiton flow
+## Lobby Control Flow
 ![Lobby flow diagram](./frontend/src/assets/lobby%20control%20flow.svg)
+
+<br>
+
+## Game Control Flow
+![Game flow diagram](./frontend/src/assets/game%20control%20flow.svg)
