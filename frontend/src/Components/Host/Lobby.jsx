@@ -6,6 +6,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import './host.css'
 import UserContext from '../../Contexts/UserContext';
 import { Player } from './../Play/Player';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard } from '@fortawesome/free-regular-svg-icons';
+import {useClipboard} from 'react-haiku'
 
 const Lobby = () => {
 
@@ -15,6 +19,8 @@ const Lobby = () => {
     const { user, socket, setSocket, room, setRoom } = context;
     const navigate = useNavigate();
 
+    const clipboard = useClipboard({timeout: 2000})
+    
 
 
     useEffect(() => {
@@ -40,7 +46,7 @@ const Lobby = () => {
 
     // handle update in room status
     useEffect(() => {
-        if(socket){
+        if (socket) {
             socket.on('update-room', (room) => {
                 setRoom(room);
                 // console.log('room updated: ', room);
@@ -48,15 +54,15 @@ const Lobby = () => {
                 // setBoardSize(room?.boardSize);
             })
 
-            socket.on('room-deleted', (roomId)=>{
+            socket.on('room-deleted', (roomId) => {
                 leaveRoom();
             })
 
-            socket.on('start-game', ()=>{
+            socket.on('start-game', () => {
                 navigate('/play');
             })
-            
-            socket.on('kick-player', ()=>{
+
+            socket.on('kick-player', () => {
                 // console.log('exiting from room');
                 socket.disconnect();
                 setSocket(null);
@@ -65,7 +71,7 @@ const Lobby = () => {
             })
 
         }
-    },[])
+    }, [])
 
 
     // change board size
@@ -104,6 +110,8 @@ const Lobby = () => {
                     <p>Room Id:</p>
                     <div>
                         <span className="room-id">{room?.roomId}</span>
+                        <span className="copy" onClick={() => { clipboard.copy(room?.roomId) }}><FontAwesomeIcon icon={clipboard.copied ? faCheck : faClipboard}></FontAwesomeIcon></span>
+
                     </div>
                 </div>
                 <div className="box">
@@ -113,7 +121,7 @@ const Lobby = () => {
                         })}
                     </div>
                 </div>
-                <div className="box" style={{marginTop:'3rem'}}>
+                <div className="box" style={{ marginTop: '3rem' }}>
                     <p>Board Size:</p>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <button id='four' className='btn-player'>4x4</button>
