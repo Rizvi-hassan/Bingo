@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClipboard } from '@fortawesome/free-regular-svg-icons'
-import {faCheck} from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import './host.css'
 import UserContext from '../../Contexts/UserContext';
 import { Player } from './../Play/Player';
@@ -12,7 +12,7 @@ const Host = () => {
 
     const [boardSize, setBoardSize] = useState(5);
     const [roomId, setRoomId] = useState(null);
-    const clipboard = useClipboard({timeout: 2000})
+    const clipboard = useClipboard({ timeout: 2000 })
 
     const context = useContext(UserContext);
     const { user, socket, setSocket, room, setRoom } = context;
@@ -47,10 +47,10 @@ const Host = () => {
                 setRoom(null);
                 navigate('/');
             })
-            
+
         }
 
-    },[])
+    }, [])
 
 
     // create room for the first time
@@ -96,7 +96,7 @@ const Host = () => {
         navigate('/');
     }
 
-    const boardMap = { 4: 'four', 5: 'five', 6: 'six' }
+    const boardMap = { 4: 'four', 5: 'five', 6: 'six', 7: 'seven' }
     const changeBoardSize = (val) => {
 
         if (boardSize === val) return;
@@ -106,21 +106,21 @@ const Host = () => {
         document.getElementById(boardMap[val]).classList.toggle('select-diff');
 
         setBoardSize(val);
-        setRoom({...room, boardSize: val});
+        setRoom({ ...room, boardSize: val });
         // console.log('changing room')
         socket.emit('change-board-size', room?.roomId, val);
     }
 
-    
-    const handleStart = ()=>{
+
+    const handleStart = () => {
         socket.emit('start', room?.roomId);
         navigate('/play');
     }
 
     // function to remove joined members 
-    const handleExit = (user)=>{
+    const handleExit = (user) => {
         // console.log(user);
-        if(user !== ''){
+        if (user !== '') {
             socket.emit('remove-player', room.roomId, user);
         }
     }
@@ -140,7 +140,7 @@ const Host = () => {
                     <p>Room Id:</p>
                     <div>
                         <span className="room-id">{room?.roomId}</span>
-                        <span className="copy" onClick={()=>{clipboard.copy(room?.roomId)}}><FontAwesomeIcon icon={clipboard.copied? faCheck :faClipboard}></FontAwesomeIcon></span>
+                        <span className="copy" onClick={() => { clipboard.copy(room?.roomId) }}><FontAwesomeIcon icon={clipboard.copied ? faCheck : faClipboard}></FontAwesomeIcon></span>
                     </div>
                 </div>
                 <div className="box">
@@ -150,12 +150,13 @@ const Host = () => {
                         })}
                     </div>
                 </div>
-                <div className="box" style={{marginTop:'3rem'}}>
+                <div className="box" style={{ marginTop: '3rem' }}>
                     <p>Board Size:</p>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <button id='four' onClick={() => { changeBoardSize(4) }} className='btn-player'>4x4</button>
                         <button id='five' onClick={() => { changeBoardSize(5) }} className='btn-player select-diff'>5x5</button>
                         <button id='six' onClick={() => { changeBoardSize(6) }} className='btn-player'>6x6</button>
+                        <button id='seven' onClick={() => { changeBoardSize(7) }} className='btn-player'>7x7</button>
 
                     </div>
                 </div>
