@@ -38,10 +38,25 @@ import thirtythree from './../../assets/images/numbers/33.png'
 import thirtyfour from './../../assets/images/numbers/34.png'
 import thirtyfive from './../../assets/images/numbers/35.png'
 import thirtysix from './../../assets/images/numbers/36.png'
+import thirtyseven from './../../assets/images/numbers/37.png'
+import thirtyeight from './../../assets/images/numbers/38.png'
+import thirtynine from './../../assets/images/numbers/39.png'
+import forty from './../../assets/images/numbers/40.png'
+import fortyone from './../../assets/images/numbers/41.png'
+import fortytwo from './../../assets/images/numbers/42.png'
+import fortythree from './../../assets/images/numbers/43.png'
+import fortyfour from './../../assets/images/numbers/44.png'
+import fortyfive from './../../assets/images/numbers/45.png'
+import fortysix from './../../assets/images/numbers/46.png'
+import fortyseven from './../../assets/images/numbers/47.png'
+import fortyeight from './../../assets/images/numbers/48.png'
+import fortynine from './../../assets/images/numbers/49.png'
+
 
 const Number = [dash, one, two, three, four, five, six, seven, eight, nine, ten, eleven, 
     twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty,
     twentyone, twentytwo, twentythree, twentyfour, twentyfive, twentysix, twentyseven, twentyeight, twentynine, thirty,
-    thirtyone, thirtytwo, thirtythree, thirtyfour, thirtyfive, thirtysix
+    thirtyone, thirtytwo, thirtythree, thirtyfour, thirtyfive, thirtysix, thirtyseven, thirtyeight, thirtynine, forty, 
+    fortyone, fortytwo, fortythree, fortyfour, fortyfive, fortysix, fortyseven, fortyeight, fortynine
 ];
 export default Number

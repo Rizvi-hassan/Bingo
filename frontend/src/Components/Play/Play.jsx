@@ -209,8 +209,7 @@ const Play = () => {
                 {renderBingo()}
             </div>
             <button onClick={handleExit} className='btn'>Exit</button>
-
-
+            <button onClick={()=> setNo( no => no+1 )} >test</button>
         </div>
     )
 }
