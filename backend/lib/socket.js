@@ -195,6 +195,7 @@ io.on('connect', socket => {
         socket.broadcast.in(roomId).emit('player-won', user.email);
 
         // adding player to won queue
+        let toSave = {...user, ['rank']:availableRooms[roomId].won.length+1};
         availableRooms[roomId].won.push(user);
 
         // if won player is the current player then select next move
@@ -263,7 +264,7 @@ io.on('connect', socket => {
                 if (player.email === email) {
                     console.log('leave room')
                     // if the current player left 
-                    if (availableRooms[id].playing[0] && availableRooms[id].playing[0].email === email ) {
+                    if (availableRooms[id].playing.length > 0 && availableRooms[id].playing[0] && availableRooms[id].playing[0].email === email ) {
                         availableRooms[id].playing.shift();
                         // if all players are not ready, no need to go for select turn
                         if (room.ready >= room.playing.length) {

@@ -15,7 +15,7 @@ const Finish = () => {
   })
 
   // Use winners from context if available, otherwise use dummy data
-  const displayWinners = winners;
+  const displayWinners = winners.sort( (a, b) => a.rank - b.rank);
 
   // Calculate medal colors
   const getMedalColor = (rank) => {

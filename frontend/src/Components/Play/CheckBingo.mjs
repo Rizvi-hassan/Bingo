@@ -3,23 +3,25 @@ import { useLocation } from 'react-router-dom'
 
 
 let check = [
-    [false, false, false, false, false, false],
-    [false, false, false, false, false, false],
-    [false, false, false, false, false, false],
-    [false, false, false, false, false, false],
-    [false, false, false, false, false, false],
-    [false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
+    [false, false, false, false, false, false, false],
 ]
 
 // reset check grid for new games
 const resetCheck = () => {
     check = [
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
-        [false, false, false, false, false, false],
+        [false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false],
+        [false, false, false, false, false, false, false],
 
     ]
 }
@@ -134,7 +136,7 @@ const secDiagComplete = (row, col, size) => {
 }
 
 const checkBingo = (row, col, size) => {
-    // console.log('checking bingo', row, col);
+    console.log('checking bingo', row, col);
     let count = 0;
     // checking row
     let i;

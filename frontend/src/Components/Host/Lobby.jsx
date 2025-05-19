@@ -75,15 +75,15 @@ const Lobby = () => {
 
 
     // change board size
-    const boardMap = { 4: 'four', 5: 'five', 6: 'six' }
+    const boardMap = { 4: 'four', 5: 'five', 6: 'six', 7: 'seven' }
     const changeBoardSize = (val) => {
 
         if (document.getElementById(boardMap[4])) document.getElementById(boardMap[4]).classList.remove('select-diff');
         if (document.getElementById(boardMap[5])) document.getElementById(boardMap[5]).classList.remove('select-diff');
         if (document.getElementById(boardMap[6])) document.getElementById(boardMap[6]).classList.remove('select-diff');
+        if (document.getElementById(boardMap[7])) document.getElementById(boardMap[7]).classList.remove('select-diff');
 
         if (document.getElementById(boardMap[val])) document.getElementById(boardMap[val]).classList.add('select-diff');
-
     }
 
     const leaveRoom = () => {
@@ -127,6 +127,7 @@ const Lobby = () => {
                         <button id='four' className='btn-player'>4x4</button>
                         <button id='five' className='btn-player select-diff'>5x5</button>
                         <button id='six' className='btn-player'>6x6</button>
+                        <button id='seven' className='btn-player'>7x7</button>
 
                     </div>
                 </div>
