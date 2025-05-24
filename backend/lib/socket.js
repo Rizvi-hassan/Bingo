@@ -199,7 +199,9 @@ io.on('connect', socket => {
         availableRooms[roomId].won.push(user);
 
         // if won player is the current player then select next move
-        checkBingo(roomId);
+        // checkBingo(roomId);
+        console.log('player won: ', user.email);
+        checkPlayed(roomId);
 
     })
 

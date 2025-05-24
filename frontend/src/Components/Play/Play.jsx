@@ -92,6 +92,7 @@ const Play = () => {
             //color of winning player #e4ff00
             socket.on('player-won', (email) => {
                 document.getElementById(email).style.stroke = '#e4ff00'
+                console.log("player won: ", email);
             })
         }
     }, [])
@@ -209,7 +210,6 @@ const Play = () => {
                 {renderBingo()}
             </div>
             <button onClick={handleExit} className='btn'>Exit</button>
-            <button onClick={()=> setNo( no => no+1 )} >test</button>
         </div>
     )
 }
