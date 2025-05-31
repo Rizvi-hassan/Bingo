@@ -199,9 +199,10 @@ const Play = () => {
                 {!ready ? <span>Click on the boxes to fill them</span> : myTurn ? <span style={{ background: 'beige' }}>Your Turn to pick a number.</span> : <span>Wait for other player`s move</span>}
                 {/* <span>Waiting for players to fill the grid</span> */}
             </div>
-            {won ? null : <div className="board">
-                {renderGrid(room?.boardSize)}
-            </div>}
+            {/* {won ? null : <div className="board">
+                
+            </div>} */}
+            <div className='board'>{renderGrid(room?.boardSize)}</div>
             <div className="bingo">
                 {/* <span className="letter">B</span>
                 <span className="letter">I</span>
