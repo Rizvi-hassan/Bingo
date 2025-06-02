@@ -42,10 +42,10 @@ const Grid_7 = (props) => {
         } else {
             if (ready) {
                 if (myTurn || grid[row][col] === no) {
-                    clickedNo(grid[row][col])
                     document.getElementById(`cross${row}${col}`).style.display = 'inline-flex';
                     check[row][col] = true;
                     let count = checkBingo(row, col, 7);
+                    clickedNo(grid[row][col], bingo+count)
                     setBingo(bingo => bingo + count)
                 }
             }

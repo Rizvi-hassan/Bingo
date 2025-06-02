@@ -50,11 +50,11 @@ const Play = () => {
 
             // a player is selected for turn
             socket.on('player-turn', (who) => {
-                console.log('player turn in room: ', room);
+                // console.log('player turn in room: ', room);
                 // setting all player`s circle color to blue (not ready)
 
                 for (let player of room?.players) {
-                    console.log(player);
+                    // console.log(player);
                     if (document.getElementById(player?.email)) {
                         document.getElementById(player?.email).style.stroke = '#219EBC'
                     }
@@ -70,16 +70,23 @@ const Play = () => {
             })
 
             // player recieves the current move
-            socket.on('current-move', (move, email) => {
+            socket.on('current-move', (move, email, isWon) => {
                 console.log('current move is', move);
-                document.getElementById(email).style.stroke = '#8ee694'
+                if (isWon)
+                    document.getElementById(email).style.stroke = '#e4ff00'
+                else
+                    document.getElementById(email).style.stroke = '#8ee694'
+                
                 document.getElementById('move').style.transform = 'translateY(0px)'
                 setNo(move);
             })
 
             // inform player that other player has played move
-            socket.on('move-played', (who) => {
-                document.getElementById(who).style.stroke = '#8ee694'
+            socket.on('move-played', (who, isWon) => {
+                if (isWon)
+                    document.getElementById(who).style.stroke = '#e4ff00'
+                else
+                    document.getElementById(who).style.stroke = '#8ee694'
             })
 
             // match has finished
@@ -88,12 +95,8 @@ const Play = () => {
                 navigate('/finish');
             })
 
-            // inform others that 1 player won
             //color of winning player #e4ff00
-            socket.on('player-won', (email) => {
-                document.getElementById(email).style.stroke = '#e4ff00'
-                console.log("player won: ", email);
-            })
+
         }
     }, [])
 
@@ -118,10 +121,10 @@ const Play = () => {
     }, [bingo])
 
 
-    const sendMyMove = (move) => {
+    const sendMyMove = (move, isWon) => {
         console.log('sending my move: ', move);
         setNo(move);
-        socket.volatile.emit('my-move', room?.roomId, move, user?.email);
+        socket.volatile.emit('my-move', room?.roomId, move, user?.email, isWon);
         document.getElementById(user?.email).style.stroke = '#8ee694';
         setMyTurn(false);
     }
@@ -135,12 +138,12 @@ const Play = () => {
         isReady(true);
     }
 
-    const clickedNo = (no) => {
+    const clickedNo = (no, count) => {
         if (myTurn) {
-            sendMyMove(no);
+            sendMyMove(no, count >= room?.boardSize);
         }
         else {
-            sendMyMove(0);
+            sendMyMove(0, count >= room?.boardSize);
         }
         document.getElementById('move').style.transform = 'translateY(100%)'
         setNo(0);
@@ -174,7 +177,7 @@ const Play = () => {
     }
 
     const renderBingo = () => {
-        const word = room?.boardSize === 7? "KURKURE" : "BINGOS";
+        const word = room?.boardSize === 7 ? "KURKURE" : "BINGOS";
         let elements = [];
         for (let i = 1; i <= room?.boardSize; i++) {
             elements.push(<span key={i} id={`letter${i}`} className="letter">{word[i - 1]}</span>)
@@ -188,7 +191,7 @@ const Play = () => {
         <div className='play'>
             <div className="players">
                 {room?.players.map((val) => {
-                    return <Player key={val.email} user={val.email} id={val.name} image={val.image}></Player>
+                    return <Player key={val.email} user={val.email} id={''} image={val.image}></Player>
                 })}
             </div>
             <div className="timer" >
@@ -199,15 +202,10 @@ const Play = () => {
                 {!ready ? <span>Click on the boxes to fill them</span> : myTurn ? <span style={{ background: 'beige' }}>Your Turn to pick a number.</span> : <span>Wait for other player`s move</span>}
                 {/* <span>Waiting for players to fill the grid</span> */}
             </div>
-            {/* {won ? null : <div className="board">
-                
-            </div>} */}
-            <div className='board'>{renderGrid(room?.boardSize)}</div>
+            {won ? null : <div className="board">
+                {renderGrid(room?.boardSize)}
+            </div>}
             <div className="bingo">
-                {/* <span className="letter">B</span>
-                <span className="letter">I</span>
-                <span className="letter">N</span>
-                <span className="letter">G</span> */}
                 {renderBingo()}
             </div>
             <button onClick={handleExit} className='btn'>Exit</button>

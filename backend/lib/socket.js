@@ -161,49 +161,53 @@ io.on('connect', socket => {
 
 
     // recieves player`s move
-    socket.on('my-move', (roomId, move, mail) => {
+    socket.on('my-move', (roomId, move, mail, isWon) => {
         if (move !== 0) {
             // if move != 0 player was selected for move and his move is move
             // boradcast this move to all other players
-            socket.broadcast.in(roomId).emit('current-move', move, mail);
+            socket.broadcast.in(roomId).emit('current-move', move, mail, isWon);
 
             // setting current move
             availableRooms[roomId].move = move;
         }
         else {
             // if move == 0 player has played the current move
-            socket.broadcast.in(roomId).emit('move-played', mail);
+            socket.broadcast.in(roomId).emit('move-played', mail, isWon);
         }
         // as 1 player played  
         availableRooms[roomId].played += 1;
+
+        if(isWon) wonMatch(roomId, mail);
 
         // check if all players played
         checkPlayed(roomId);
     })
 
     // a player won match
-    socket.on('won-match', (roomId, user) => {
+    const wonMatch = (roomId, mail) => {
 
         // removing the player from playing queue
+        let user = null;
         let playing = availableRooms[roomId].playing;
         let remain = playing.filter((val) => {
-            return val.email !== user.email;
+            if (val.email !== email){
+                return true;
+            }
+            else{
+                user = val;
+                return false
+            }
         })
         availableRooms[roomId].playing = remain;
-
-        // inform others that player won
-        socket.broadcast.in(roomId).emit('player-won', user.email);
 
         // adding player to won queue
         let toSave = {...user, ['rank']:availableRooms[roomId].won.length+1};
         availableRooms[roomId].won.push(user);
 
-        // if won player is the current player then select next move
-        // checkBingo(roomId);
         console.log('player won: ', user.email);
-        checkPlayed(roomId);
 
-    })
+
+    }
 
 
     // check if all players played move
@@ -266,7 +270,7 @@ io.on('connect', socket => {
                 if (player.email === email) {
                     console.log('leave room')
                     // if the current player left 
-                    if (availableRooms[id].playing.length > 0 && availableRooms[id].playing[0] && availableRooms[id].playing[0].email === email ) {
+                    if (availableRooms[id].playing?.length > 0 && availableRooms[id].playing[0] && availableRooms[id].playing[0].email === email ) {
                         availableRooms[id].playing.shift();
                         // if all players are not ready, no need to go for select turn
                         if (room.ready >= room.playing.length) {

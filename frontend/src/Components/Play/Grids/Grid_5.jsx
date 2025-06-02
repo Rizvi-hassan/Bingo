@@ -39,13 +39,13 @@ const Grid_5 = (props) => {
             setCount(count => count + 1);
             setGrid(newGrid);
         } else {
-            if (ready) {
+            if (ready && !check[row][col]) {
                 if (myTurn || grid[row][col] === no) {
-                    clickedNo(grid[row][col])
                     document.getElementById(`cross${row}${col}`).style.display = 'inline-flex';
                     check[row][col] = true;
                     let count = checkBingo(row, col, 5);
-                    setBingo(bingo => bingo+count)
+                    clickedNo(grid[row][col], bingo + count)
+                    setBingo(bingo => bingo + count)
                 }
             }
         }
@@ -55,7 +55,7 @@ const Grid_5 = (props) => {
 
     const renderCross = (val) => {
         return (
-            <span style={{ position: 'absolute', color: '#ff00009c', display: 'none', fontSize: '2.5rem', alignItems: 'center', justifyContent: 'center', transition:'font-size 200ms ease, color 200ms ease'}} id={val} >
+            <span style={{ position: 'absolute', color: '#ff00009c', display: 'none', fontSize: '2.5rem', alignItems: 'center', justifyContent: 'center', transition: 'font-size 200ms ease, color 200ms ease' }} id={val} >
                 <FontAwesomeIcon icon={faXmark} />
             </span>
         )
