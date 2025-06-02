@@ -254,6 +254,11 @@ io.on('connect', socket => {
     }
 
 
+    //---------------- INGAME CHAT---------------------------------
+    socket.on('chat',( roomId, user, message)=>{
+        console.log("chat: ", roomId, user, message)
+        socket.broadcast.in(roomId).emit( "chat", user, message);
+    })
 
     //------------------------------------HANDLES THE EVENT WHEN A SOCKET IS DISCONNECTED-----------------------------------------------
 

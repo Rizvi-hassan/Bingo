@@ -1,7 +1,6 @@
 import './Play.css'
 import React, { useContext, useEffect, useState } from 'react'
 import { Player } from './Player'
-import Number from './Number'
 import Grid_4 from './Grids/Grid_4'
 import Grid_5 from './Grids/Grid_5'
 import Grid_6 from './Grids/Grid_6'
@@ -22,6 +21,8 @@ const Play = () => {
     const [myTurn, setMyTurn] = useState(false);
     const [bingo, setBingo] = useState(0);
     const [won, setWon] = useState(false);
+    const [message, setMessage] = useState('')
+    const [messages, setMessages] = useState([])
 
     useEffect(() => {
         if (!user || !room || !socket) {
@@ -76,7 +77,7 @@ const Play = () => {
                     document.getElementById(email).style.stroke = '#e4ff00'
                 else
                     document.getElementById(email).style.stroke = '#8ee694'
-                
+
                 document.getElementById('move').style.transform = 'translateY(0px)'
                 setNo(move);
             })
@@ -95,7 +96,10 @@ const Play = () => {
                 navigate('/finish');
             })
 
-            //color of winning player #e4ff00
+            // chat message 
+            socket.on('chat', (name, message)=>{
+                setMessages( messages => [...messages, [name, message]])
+            })
 
         }
     }, [])
@@ -185,7 +189,12 @@ const Play = () => {
         return elements;
     }
 
-
+    const handleMessageForm = (e) => {
+        e.preventDefault();
+        socket.emit('chat', room?.roomId, user?.name, message)
+        setMessages((messages) => [...messages, [user?.name, message]])
+        setMessage('')
+    }
 
     return (
         <div className='play'>
@@ -196,17 +205,31 @@ const Play = () => {
             </div>
             <div className="timer" >
                 <span className='moving' id='move'></span>
-                <img src={Number[no]} alt="Time" style={{ position: 'relative', width: '75%' }} />
+                {/* <img src={Number[no]} alt="Time" style={{ position: 'relative', width: '75%' }} /> */}
+                <span style={{'zIndex': '10', 'fontFamily': '"Orbitron", sans-serif'}}>{no === 0 ? "..." : no}</span>
             </div>
-            <div className="status">
-                {!ready ? <span>Click on the boxes to fill them</span> : myTurn ? <span style={{ background: 'beige' }}>Your Turn to pick a number.</span> : <span>Wait for other player`s move</span>}
-                {/* <span>Waiting for players to fill the grid</span> */}
+            <div className="bingo">
+                {renderBingo()}
             </div>
             {won ? null : <div className="board">
                 {renderGrid(room?.boardSize)}
             </div>}
-            <div className="bingo">
-                {renderBingo()}
+            <div className="chat">
+                <div className="messages">
+                    {messages?.map((message, i) => {
+                        return (
+                            <div key={i} className="text">
+                                <span className="user">{message[0] === user?.name? 'you' : message[0]}</span>
+                                <p className='message-text'>{message[1]}</p>
+                            </div>
+                        )
+                    })}
+
+                </div>
+                <form onSubmit={handleMessageForm} className="message-form">
+                    <input id='input-field' type="text" placeholder='Enter message' value={message} onChange={(e) => { setMessage(e.target.value) }} autoComplete='off' />
+                    <input id='input-submit' type="submit" value="Send" />
+                </form>
             </div>
             <button onClick={handleExit} className='btn'>Exit</button>
         </div>
