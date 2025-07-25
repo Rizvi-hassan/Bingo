@@ -2,19 +2,26 @@
   "dependencies": {
     "@socket.io/admin-ui": "^0.5.1",
     "axios": "^1.8.3",
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^1.41.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "googleapis": "^146.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "socket.io": "^4.8.1"
   },
   "name": "backend",
   "version": "1.0.0",
   "main": "app.js",
+  "type": "module",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "",

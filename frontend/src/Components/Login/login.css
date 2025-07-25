@@ -1,39 +1,112 @@
 .login {
-    display: flex;
-    flex-direction: column;
+    display: block;
     align-items: center;
-    justify-content: center;
     height: 100vh;
-    gap: 3rem;
+    width: 100vw;
 }
 
 .login .head {
-    position: absolute;
-    top: 10%;
-    /* border: 1px solid; */
+    position: relative;
+    width: 100%;
+    text-align: center;
+    margin-top: 1rem;
 }
 
+
+
 .login .logo {
-    height: 15vh;
+    height: 10vh;
 }
 
 .login .path {
     fill: #023047;
 }
 
-.login .google-btn {
+.login .nav {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+}
+
+.login .nav ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    width: 100%;
+    justify-content: center;
+    gap: 10%;
+    font-weight: 400;
+}
+
+.login .nav li {
+    /* cursor: pointer; */
+    font-size: 1.5rem;
+    color: #023047;
+    /* font-weight: 600; */
+    color: rgb(106, 114, 122);
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding: 0px 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.form-box {
+    display: block;
+    position: relative;
+    margin-top: 1rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
     width: 20rem;
-    height: 4rem;
+    margin: auto;
+}
+
+.login .google-btn {
+    width: 14rem;
+    height: 3rem;
     display: inline-flex;
     align-items: center;
-    font-size: 24px;
+    /* font-size: 24px; */
     justify-content: center;
     gap: 7%;
-    border-radius: 1rem;
+    border-radius: 10px;
 }
 
 .login .google-logo {
     height: 60%;
+}
+
+.input-field {
+    font-weight: bolder;
+    letter-spacing: 1px;
+    text-align: center;
+    padding: 0.3rem;
+    font-size: 20px;
+    outline: none;
+    background: #8ECAE6;
+    border: 5px solid #219EBC;
+    border-radius: 8px;
+}
+
+.login-btn {
+    background-color: #2aff17;
+    border: 5px solid #10bb00;
+    border-radius: 10px;
+    padding: 0.2rem 1rem;
+    font-size: 20px;
+    transition: scale 100ms ease, background-color 100ms ease;
+    transform: translate3d(0, 0, 0);
+    width: 10rem;
+    display: block;
+    margin: auto;
 }
 
 @media screen and (max-width: 560px) {

@@ -1,6 +1,11 @@
-const { googleLogin } = require('../controller/authController');
+import { googleLogin } from '../controller/authController.js';
+import {register, login, checkAuth} from '../controller/authController.js'
+import { profileUpload } from '../utils/storage.js'
 
-const router = require('express').Router();
+
+import {Router} from 'express'
+
+const router = Router();
 
 // test route to check if srever is working 
 router.get('/test', (req, res)=>{
@@ -10,4 +15,10 @@ router.get('/test', (req, res)=>{
 // handles google auth routing 
 router.get('/google', googleLogin)
 
-module.exports = router;
+router.post('/register', profileUpload.single('profile'), register);
+
+router.post('/login', login)
+
+router.get('/check-auth', checkAuth)
+
+export default router;

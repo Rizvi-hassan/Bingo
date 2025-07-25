@@ -1,11 +1,10 @@
-const { Server } = require("socket.io");
-const http = require("http");
-const express = require("express");
-const { connect } = require("http2");
-const { instrument } = require('@socket.io/admin-ui')
+import { Server } from "socket.io";
+import { createServer } from "http";
+import express from "express";
+import { instrument } from '@socket.io/admin-ui';
 
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 
 const io = new Server(server, {
     cors: {
@@ -319,4 +318,4 @@ io.on('connect', socket => {
 
 
 
-module.exports = { app, server, io }
+export { app, server, io }

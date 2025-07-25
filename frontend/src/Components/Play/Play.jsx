@@ -191,7 +191,9 @@ const Play = () => {
 
     const handleMessageForm = (e) => {
         e.preventDefault();
-        socket.emit('chat', room?.roomId, user?.name, message)
+        if(message !== '')
+            socket.emit('chat', room?.roomId, user?.name, message)
+        
         setMessages((messages) => [...messages, [user?.name, message]])
         setMessage('')
     }

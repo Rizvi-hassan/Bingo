@@ -1,13 +1,18 @@
-const express = require('express')
-// const app = express();
-require('dotenv').config()
-require('./models/dbConnection');
-const authRouter = require('./routes/authRouter')
-const { app, server } = require("./lib/socket");
-const cors = require('cors');
+import CookieParser from 'cookie-parser'
+import {config} from 'dotenv'
+config()
+import './utils/dbConnection.js';
+import authRouter from './routes/authRouter.js';
+import { app, server } from "./lib/socket.js";
+import cors from 'cors';
 const port = process.env.PORT ||8080
 
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:5173', process.env.CORS_ORIGIN],
+    credentials: true
+}));
+
+app.use(CookieParser())
 
 app.get('/', (req, res)=>{
     res.send("Hello from auth server")

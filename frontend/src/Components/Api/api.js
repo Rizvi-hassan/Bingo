@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080'
+    baseURL: import.meta.env.VITE_DEV_MODE === 'development' ? 'http://localhost:8080' : import.meta.env.VITE_API_URL
 })
 
 // handles oauth api request to the server

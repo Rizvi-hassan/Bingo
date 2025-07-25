@@ -78,7 +78,7 @@
     border: 5px solid #10bb00;
     border-radius: 10px;
     padding: 0.5rem 1rem;
-    font-size: 20px;
+    font-size: 17px;
     transition: scale 100ms ease, background-color 100ms ease;
     transform: translate3d(0, 0, 0);
 }

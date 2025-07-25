@@ -8,7 +8,7 @@ import Me from './Components/Me/Me'
 import UserState from './Contexts/UserState'
 import Play from './Components/Play/Play'
 import NotFound from './Components/NotFound/NotFound'
-import Login from './Components/Login/Login'
+import Auth from './Components/Login/Auth'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import Finish from './Components/Finish/Finish'
 
@@ -17,7 +17,7 @@ function App() {
   const GoogleAuthWrapper = ()=>{
     return(
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT}>
-        <Login/>
+        <Auth/>
       </GoogleOAuthProvider>
     )
   }

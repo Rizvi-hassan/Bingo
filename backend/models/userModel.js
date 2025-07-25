@@ -1,18 +1,36 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
 
 // stores user info in db -- not utilized this part in the project (just dummy)
-const userSchema = new mongoose.Schema({
-    name:{
+const userSchema = new Schema({
+    username: {
         type: String
     },
     email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    profile: {
         type: String
     },
-    image:{
-        type: String 
-    }
+    password: {
+        type: String,
+        select: false
+    },
+    friends: [{
+        type: Schema.Types.ObjectId,
+        ref: 'social-logins'
+    }],
+    authType: {
+        type: String,
+        enum: ['google', 'local'],
+        default: 'local'
+    },
+}, 
+{
+    timestamps: true
 })
 
-const userModel = mongoose.model('social-logins', userSchema)
+const userModel = model('social-logins', userSchema)
 
-module.exports = userModel
+export default userModel
