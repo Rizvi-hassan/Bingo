@@ -1,6 +1,24 @@
 import {create} from 'zustand'
+import { api } from './../lib/axios';
 
-export default authStore = ((set, get) => ({
+const authStore = create((set, get) => ({
     user: null,
 
+    setUser : (newUser) =>{
+        set({user: newUser})
+    },
+
+    checkAuth: async () =>{
+        try {
+            const response = await api.get('/auth/check-auth');
+            if(response) {
+                set({user: response.data.user})
+                console.log(response.data.user);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }))
+
+export default authStore;

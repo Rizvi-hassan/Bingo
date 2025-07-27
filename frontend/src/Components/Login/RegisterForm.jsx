@@ -140,7 +140,7 @@ const RegisterForm = () => {
                 {invalid && <span style={{ color: 'red', fontFamily: 'Open Sans, sans-serif', fontSize: '15px' }}>{errMsg}</span>}
                 <button type="submit" className="login-btn" disabled={loading} >{loading? "Loading..." : 'Register'}</button>
 
-                <p style={{ 'fontFamily': 'Open Sans, sans-serif', 'fontSize': '17px' }}>Have an account? <span style={{ 'color': 'blue' }} >Login</span> </p>
+                {/* <p style={{ 'fontFamily': 'Open Sans, sans-serif', 'fontSize': '17px' }}>Have an account? <span style={{ 'color': 'blue' }} >Login</span> </p> */}
             </form>
         </div>
     )

@@ -1,9 +1,10 @@
 import { googleLogin } from '../controller/authController.js';
-import {register, login, checkAuth} from '../controller/authController.js'
+import {register, login, checkAuth, logout} from '../controller/authController.js'
 import { profileUpload } from '../utils/storage.js'
 
 
 import {Router} from 'express'
+import protect from './../utils/protect.js';
 
 const router = Router();
 
@@ -19,6 +20,8 @@ router.post('/register', profileUpload.single('profile'), register);
 
 router.post('/login', login)
 
-router.get('/check-auth', checkAuth)
+router.get('/check-auth', protect, checkAuth)
+
+router.get('/logout', logout);
 
 export default router;

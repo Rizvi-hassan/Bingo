@@ -59,7 +59,7 @@
 .body-hero {
     display: flex;
     width: 100vw;
-    height: 100vh;
+    height: 85vh;
     justify-content: center;
     align-items: center;
     flex-direction: row;
@@ -68,12 +68,20 @@
     transition: opacity 400ms ease;
 }
 
-.body-hero .login-box {
-    position: absolute;
-    bottom: 5rem;
+ .login-box {
+    text-align: center;
 }
 
-.body-hero .login-box .login-btn {
+ .user-box {
+    border: 1px solid;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.login-box .login-btn, .logout-btn {
     background-color: #2aff17;
     border: 5px solid #10bb00;
     border-radius: 10px;
@@ -83,12 +91,23 @@
     transform: translate3d(0, 0, 0);
 }
 
-.body-hero .login-box .shake{
+.logout-btn {
+    background-color: #ff1717;
+    border: 5px solid #bb0000;
+    
+}
+
+.login-box .shake{
     animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
 }
 
-.body-hero .login-box .login-btn:active {
+.login-box .login-btn:active {
     background-color: #7eff72;
+    scale: 0.9;
+}
+
+.logout-btn:active {
+    background-color: #ff7272;
     scale: 0.9;
 }
 

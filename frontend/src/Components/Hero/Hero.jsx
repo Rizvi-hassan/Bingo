@@ -3,6 +3,8 @@ import './hero.css'
 import { Link, useNavigate } from 'react-router-dom'
 import UserContext from './../../Contexts/UserContext';
 import { io } from 'socket.io-client'
+import authStore from '../../store/authStore';
+import {Player} from './../Play/Player';
 
 
 const Hero = () => {
@@ -11,8 +13,9 @@ const Hero = () => {
     const [loadingJoin, setLoadingJoin] = useState(false);
 
     const context = useContext(UserContext);
-    const { user, saveUser, socket, setSocket, setPlayers} = context;
-    
+    const { saveUser, socket, setSocket, setPlayers } = context;
+    const { user, checkAuth } = authStore();
+
     const navigate = useNavigate();
     const url = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
@@ -20,10 +23,12 @@ const Hero = () => {
     const onConnect = (path) => {
 
         if (!socket) {
-            const s = io(url, { 
-                query: {name: user.name, 
-                        image: user.image, 
-                        email: user.email } 
+            const s = io(url, {
+                query: {
+                    name: user.name,
+                    image: user.image,
+                    email: user.email
+                }
             });
             setSocket(s);
             s.on('connect', () => {
@@ -35,8 +40,8 @@ const Hero = () => {
     }
 
     // handles join/host button event
-    const enterLobby = (path)=>{
-        if(!user){
+    const enterLobby = (path) => {
+        if (!user) {
             document.getElementById('login-btn').classList.add('shake');
             setTimeout(() => {
                 document.getElementById('login-btn').classList.remove('shake');
@@ -44,34 +49,25 @@ const Hero = () => {
             return;
         }
 
-        if(!socket){
-            (path === 'host')? setLoadingHost(true) : setLoadingJoin(true);
+        if (!socket) {
+            (path === 'host') ? setLoadingHost(true) : setLoadingJoin(true);
             onConnect(path);
-        } 
+        }
 
         // navigate(path);
     }
 
     useEffect(() => {
+        // check auth
+        checkAuth();
+    }, [])
 
+    useEffect(() => {
         setTimeout(() => {
             document.getElementById('hero-body').style.opacity = 1;
         }, 1400);
         setSocket(null)
         // console.log("user is...", user)
-        if (!user) {
-
-            const data = localStorage.getItem('bingo-user-info'); // fetches user info from localstorage, if present
-            // console.log("data is...", data)
-            if (data === null && !JSON.parse(data)?.token) {
-                saveUser(null);
-            }
-            else {
-                const { name, email, image } = JSON.parse(data);
-                saveUser({ name, email, image });
-                setPlayers([{name, email, image}])
-            }
-        }
         return () => {
             if (socket) socket.disconnect();
         }
@@ -86,15 +82,19 @@ const Hero = () => {
 
             </header>
             <div className="body-hero" id='hero-body'>
-                <button onClick={ ()=> enterLobby('host') } className="btn">{loadingHost? 'loading...': 'Host'}</button>
-                <button onClick={ ()=> enterLobby('join') } className="btn">{loadingJoin? 'loading...': 'Join'}</button>
+                <button onClick={() => enterLobby('host')} className="btn">{loadingHost ? 'loading...' : 'Host'}</button>
+                <button onClick={() => enterLobby('join')} className="btn">{loadingJoin ? 'loading...' : 'Join'}</button>
                 <Link to='/me'  ><button className="btn">Me</button></Link>
-                {(user === null) && <div className="login-box">
-                    <button className="login-btn" id='login-btn' onClick={() => { navigate('/login') }}>
-                        Login/Register
-                    </button>
-                </div>}
             </div>
+                {(user === null) ?
+                    <div className="login-box">
+                        <button className="login-btn" id='login-btn' onClick={() => { navigate('/login') }}>
+                            Login/Register
+                        </button>
+                    </div>
+                    :
+                    null
+                }
         </div>
     )
 }

@@ -88,9 +88,9 @@ const Auth = () => {
                 {isLoginVisible ? <LoginForm /> : <RegisterForm />}
             </div>
 
-            <hr style={{ 'width': '90%', 'border': '1px solid black', 'margin': 'auto' }} />
+            <hr style={{ 'width': '90%', 'border': '1px solid black', 'margin': 'auto', margin: '1rem'}} />
 
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', 'marginTop': '2rem'}}>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem', 'marginTop': '2rem'}}>
                 <button className='google-btn' onClick={googleLogin} disabled={loading || isLoggingGoole}>{loading ? "Loading" : isLoggingGoole ? "Logging In" : <span className='google-btn'><img className='google-logo' src={google} alt="google" /> Login with google</span>}</button>
                 <button className="home-btn" onClick={() => navigate('/')}>Home</button>
 
