@@ -3,10 +3,12 @@ import { api } from './../lib/axios';
 
 const authStore = create((set, get) => ({
     user: null,
+    set: set,
 
     setUser : (newUser) =>{
         set({user: newUser})
     },
+
 
     checkAuth: async () =>{
         try {

@@ -1,21 +1,22 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faClipboard } from '@fortawesome/free-regular-svg-icons'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import './host.css'
-import UserContext from '../../Contexts/UserContext';
 import { Player } from './../Play/Player';
 import { useClipboard } from 'react-haiku';
+import authStore from '../../store/authStore'
+import gameStore from '../../store/gameStore'
+
 
 const Host = () => {
 
     const [boardSize, setBoardSize] = useState(5);
-    const [roomId, setRoomId] = useState(null);
     const clipboard = useClipboard({ timeout: 2000 })
 
-    const context = useContext(UserContext);
-    const { user, socket, setSocket, room, setRoom } = context;
+    const { user } = authStore();
+    const { socket, set, room } = gameStore();
     const navigate = useNavigate();
 
 
@@ -36,16 +37,20 @@ const Host = () => {
     useEffect(() => {
         if (socket) {
             socket.on('update-room', (room) => {
-                setRoom(room);
+                set({room: room});
                 // console.log('room updated:', room);
                 // changeBoardSize(room?.boardSize)
             })
 
             socket.on('room-deleted', (roomId) => {
                 socket.disconnect();
-                setSocket(null);
-                setRoom(null);
+                set({socket: null, room: null});
                 navigate('/');
+            })
+
+            socket.on('start-game', (room) =>{
+                set({room: room});
+                navigate('/play');
             })
 
         }
@@ -59,13 +64,12 @@ const Host = () => {
         const generatedRoomId = generateRoomId();
         const curRoom = {
             roomId: generatedRoomId,
-            players: [user],
+            players: [{name: user.username, email: user.email, image: user.profile}],
             boardSize
         };
 
         // console.log("Creating room:", curRoom);
-        setRoomId(generatedRoomId);
-        setRoom(curRoom);
+        set({room: curRoom});
         try {
             socket.emit('create-room', curRoom);
 
@@ -91,8 +95,7 @@ const Host = () => {
     const leaveRoom = () => {
         socket.emit('delete-room', room?.roomId);
         socket.disconnect();
-        setSocket(null);
-        setRoom(null);
+        set({socket: null, room: null});
         navigate('/');
     }
 
@@ -106,7 +109,7 @@ const Host = () => {
         document.getElementById(boardMap[val]).classList.toggle('select-diff');
 
         setBoardSize(val);
-        setRoom({ ...room, boardSize: val });
+        set({room: { ...room, boardSize: val }});
         // console.log('changing room')
         socket.emit('change-board-size', room?.roomId, val);
     }
@@ -114,7 +117,7 @@ const Host = () => {
 
     const handleStart = () => {
         socket.emit('start', room?.roomId);
-        navigate('/play');
+        
     }
 
     // function to remove joined members 

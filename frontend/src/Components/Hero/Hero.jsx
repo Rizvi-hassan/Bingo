@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 import './hero.css'
 import { Link, useNavigate } from 'react-router-dom'
-import UserContext from './../../Contexts/UserContext';
 import { io } from 'socket.io-client'
 import authStore from '../../store/authStore';
+import gameStore from '../../store/gameStore';
 import {Player} from './../Play/Player';
 
 
@@ -12,9 +12,8 @@ const Hero = () => {
     const [loadingHost, setLoadingHost] = useState(false);
     const [loadingJoin, setLoadingJoin] = useState(false);
 
-    const context = useContext(UserContext);
-    const { saveUser, socket, setSocket, setPlayers } = context;
-    const { user, checkAuth } = authStore();
+    const { user  } = authStore();
+    const { socket, set } = gameStore();
 
     const navigate = useNavigate();
     const url = import.meta.env.VITE_API_URL || 'http://localhost:8080'
@@ -25,14 +24,15 @@ const Hero = () => {
         if (!socket) {
             const s = io(url, {
                 query: {
-                    name: user.name,
-                    image: user.image,
+                    name: user.username,
+                    image: user.profile,
                     email: user.email
                 }
             });
-            setSocket(s);
+            // setSocket(s);
+            set({socket: s})
+            console.log(path);
             s.on('connect', () => {
-                console.log("conntected socket");
                 (path === 'host') ? setLoadingHost(false) : setLoadingJoin(false);
                 navigate(`/${path}`);
             })
@@ -57,16 +57,16 @@ const Hero = () => {
         // navigate(path);
     }
 
-    useEffect(() => {
-        // check auth
-        checkAuth();
-    }, [])
+    // useEffect(() => {
+    //     // check auth
+    //     checkAuth();
+    // }, [])
 
     useEffect(() => {
         setTimeout(() => {
             document.getElementById('hero-body').style.opacity = 1;
         }, 1400);
-        setSocket(null)
+        set({socket: null})
         // console.log("user is...", user)
         return () => {
             if (socket) socket.disconnect();
@@ -93,7 +93,7 @@ const Hero = () => {
                         </button>
                     </div>
                     :
-                    null
+                    <span style={{display: 'block', margin: 'auto', width: '300px', textAlign: 'center'}}>Hello {user.username}</span>
                 }
         </div>
     )

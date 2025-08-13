@@ -55,7 +55,8 @@ io.on('connect', socket => {
             const { name, email, image } = socket.handshake.query
             availableRooms[roomId].players.push({ name, email, image });
 
-            // console.log("player added to room: ",roomId);   
+            // console.log("player added to room: ",roomId);
+            console.log("Players in room: ", availableRooms[roomId].players)   
             socket.broadcast.to(roomId).emit('update-room', availableRooms[roomId]); // inform other players that a new player has joined 
 
             callback({ status: 'success', room: availableRooms[roomId] });
@@ -124,7 +125,7 @@ io.on('connect', socket => {
         room['won'] = []; // array to store the winners in there winning order
         room['move'] = 0; // holds the current move, if selected else 0
         availableRooms[roomId] = room;
-        socket.broadcast.in(roomId).emit('start-game');
+        io.in(roomId).emit('start-game', room);
         // console.log('start: ',availableRooms[roomId]);
     })
 
@@ -161,29 +162,28 @@ io.on('connect', socket => {
 
     // recieves player`s move
     socket.on('my-move', (roomId, move, mail, isWon) => {
+        if(isWon) wonMatch(roomId, mail);
+        else availableRooms[roomId].played += 1;
+
         if (move !== 0) {
             // if move != 0 player was selected for move and his move is move
             // boradcast this move to all other players
-            socket.broadcast.in(roomId).emit('current-move', move, mail, isWon);
+            io.in(roomId).emit('current-move', move, mail, isWon, availableRooms[roomId]);
 
             // setting current move
             availableRooms[roomId].move = move;
         }
         else {
             // if move == 0 player has played the current move
-            socket.broadcast.in(roomId).emit('move-played', mail, isWon);
+            io.in(roomId).emit('move-played', mail, isWon, availableRooms[roomId]);
         }
-        // as 1 player played  
-        availableRooms[roomId].played += 1;
-
-        if(isWon) wonMatch(roomId, mail);
 
         // check if all players played
         checkPlayed(roomId);
     })
 
     // a player won match
-    const wonMatch = (roomId, mail) => {
+    const wonMatch = (roomId, email) => {
 
         // removing the player from playing queue
         let user = null;
@@ -201,11 +201,9 @@ io.on('connect', socket => {
 
         // adding player to won queue
         let toSave = {...user, ['rank']:availableRooms[roomId].won.length+1};
-        availableRooms[roomId].won.push(user);
+        availableRooms[roomId].won.push(toSave);
 
-        console.log('player won: ', user.email);
-
-
+        console.log('player won in room', availableRooms[roomId]);
     }
 
 
@@ -241,10 +239,11 @@ io.on('connect', socket => {
             // push the last playing player in won queue
             let remainPlayer = availableRooms[roomId].playing.shift();
             if (remainPlayer) {
-                availableRooms[roomId].won.push(remainPlayer);
+                let toSave = {...remainPlayer, ['rank']: availableRooms[roomId].won.length+1}
+                availableRooms[roomId].won.push(toSave);
             }
 
-            io.in(roomId).emit('match-finish', availableRooms[roomId].won);
+            io.in(roomId).emit('match-finish', availableRooms[roomId]);
 
             // delete the room and remove all sockets
             io.socketsLeave(roomId);
@@ -267,10 +266,10 @@ io.on('connect', socket => {
         let email = socket.handshake.query.email;
         console.log('email:', email);
 
-        outer:
-        for (id of Object.keys(availableRooms)) {
+        outer: 
+        for (const id of Object.keys(availableRooms)) {
             let room = availableRooms[id];
-            for (player of room.players) {
+            for (const player of room.players) {
                 if (player.email === email) {
                     console.log('leave room')
                     // if the current player left 

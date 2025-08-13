@@ -2,12 +2,16 @@ import './join.css'
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import UserContext from '../../Contexts/UserContext';
+import authStore from '../../store/authStore';
+import gameStore from '../../store/gameStore';
 
 const Join = () => {
   const [roomId, setRoomId] = useState('');
   const [invalid, setInvalid] = useState(false);
   const context = useContext(UserContext);
-  const { user, socket, setSocket, setRoom } = context;
+  // const { user, socket, setSocket, setRoom } = context;
+  const { user } = authStore()
+  const {socket, set} = gameStore();
   const navigate = useNavigate();
   useEffect(() => {
     if (user === null || socket === null) {
@@ -22,7 +26,7 @@ const Join = () => {
     socket.emit('join-room', roomId, async (res) => {
       // console.log(res.status);
       if(res.status === 'success'){
-        await setRoom(res.room);
+        await set({room: res.room});
         navigate('/lobby');
 
       }else{
@@ -36,7 +40,7 @@ const Join = () => {
 
   const handleExit = () => {
     socket.disconnect();
-    setSocket(null);
+    set({socket: null});
     navigate('/');
   }
 

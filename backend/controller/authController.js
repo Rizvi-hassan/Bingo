@@ -14,7 +14,8 @@ export const googleLogin = async (req, res) => {
 
         //recieves code from frontend and verifies its authenticity.
         const { code } = req.query;
-        console.log("login initiate");
+        console.log("login initiate -> ", code);
+
         const googleRes = await oauth2client.getToken(code); // extracts token from the code
         oauth2client.setCredentials(googleRes.tokens);  // verifies the token
 
@@ -33,7 +34,7 @@ export const googleLogin = async (req, res) => {
         // saves the uesr details in the db
         let user = await userModel.findOne({ email });
         if (!user) {
-            user = await userModel.create({ name, email, image: picture, authType: 'google' });
+            user = await userModel.create({  email, username: name, profile: picture, authType: 'google' });
             await user.save()
         } else {
             if (user.authType !== 'google') {
@@ -122,17 +123,17 @@ export const login = async (req, res) => {
 
         const foundUser = await User.findOne({email: email}).select("+password");
         if (!foundUser) {
-            res.status(404).json({message: "No user with this email exists"});
+            return res.status(404).json({message: "No user with this email exists"});
         }
         
         const isPwdValid = bcrypt.compare(password, foundUser.password);
         if (!isPwdValid) {
-            res.status(401).json({message: "Invalid Credentials"})
+            return res.status(401).json({message: "Invalid Credentials"})
         }
 
         generateToken(res, foundUser._id);
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             user: {
                 email: foundUser.email,
@@ -144,7 +145,7 @@ export const login = async (req, res) => {
 
     } catch (error) {
         console.log("Error in login: ", error);
-        res.status(500).json({message: "Internal server error"})
+        return res.status(500).json({message: "Internal server error"})
     }
 }
 
@@ -172,5 +173,5 @@ export const logout = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'dev'
     })
-    res.status(200).json({message: "Logged out successfully."})
+    return res.status(200).json({message: "Logged out successfully."})
 }

@@ -29,7 +29,7 @@ const LoginForm = () => {
         try {
             const response = await api.post('/auth/login', formData);
             if (response.status === 200){
-                setUser(response.user)
+                setUser(response.data.user)
                 navigate('/');
             }
             
