@@ -4,6 +4,7 @@ import { api } from './../lib/axios';
 const authStore = create((set, get) => ({
     user: null,
     set: set,
+    isCheckingAuth: false,
 
     setUser : (newUser) =>{
         set({user: newUser})
@@ -11,6 +12,7 @@ const authStore = create((set, get) => ({
 
 
     checkAuth: async () =>{
+        set({isCheckingAuth: true})
         try {
             const response = await api.get('/auth/check-auth');
             if(response) {
@@ -19,6 +21,8 @@ const authStore = create((set, get) => ({
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            set({isCheckingAuth: false})
         }
     }
 }))

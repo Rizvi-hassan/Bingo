@@ -12,7 +12,7 @@ const Hero = () => {
     const [loadingHost, setLoadingHost] = useState(false);
     const [loadingJoin, setLoadingJoin] = useState(false);
 
-    const { user  } = authStore();
+    const { user, isCheckingAuth  } = authStore();
     const { socket, set } = gameStore();
 
     const navigate = useNavigate();
@@ -86,14 +86,14 @@ const Hero = () => {
                 <button onClick={() => enterLobby('join')} className="btn">{loadingJoin ? 'loading...' : 'Join'}</button>
                 <Link to='/me'  ><button className="btn">Me</button></Link>
             </div>
-                {(user === null) ?
+                {!isCheckingAuth && ((user === null) ?
                     <div className="login-box">
                         <button className="login-btn" id='login-btn' onClick={() => { navigate('/login') }}>
                             Login/Register
                         </button>
                     </div>
                     :
-                    <span style={{display: 'block', margin: 'auto', width: '300px', textAlign: 'center'}}>Hello {user.username}</span>
+                    <span style={{display: 'block', margin: 'auto', width: '300px', textAlign: 'center'}}>Hello {user.username}</span>)
                 }
         </div>
     )

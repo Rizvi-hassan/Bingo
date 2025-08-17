@@ -1,5 +1,5 @@
 import './Play.css'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Player } from './Player'
 import Grid_4 from './Grids/Grid_4'
 import Grid_5 from './Grids/Grid_5'
@@ -14,10 +14,11 @@ import gameStore from '../../store/gameStore'
 const Play = () => {
 
     const navigate = useNavigate();
-    const context = useContext(UserContext)
     // const { user, room, socket, setSocket, setRoom, setWinners } = context;
     const { user } = authStore();
-    const { room, socket, set} = gameStore();
+    // const { room, socket, set} = gameStore();
+    const room = gameStore((state) => state.room)
+    const socket = gameStore((state) => state.socket)
 
 
     const [ready, isReady] = useState(false); // holds if a player is ready or not
@@ -78,8 +79,11 @@ const Play = () => {
             socket.on('current-move', (move, email, isWon, newRoom) => {
                 if (isWon){
                     document.getElementById(email).style.stroke = '#e4ff00'
+                    console.log(" Room before updating", room)
+                    // gameStore.setState({ room: newRoom })
                     room.playing = newRoom.playing;
                     room.won = newRoom.won;
+                    console.log(" Room after updating", room)
                 }
                 else
                     document.getElementById(email).style.stroke = '#8ee694'
@@ -91,10 +95,14 @@ const Play = () => {
             // inform player that other player has played move
             socket.on('move-played', (who, isWon, newRoom) => {
                 if (isWon){
-                    console.log("updated Room", newRoom)
                     document.getElementById(who).style.stroke = '#e4ff00'
+                    console.log(" Room before updating", room)
+                    // gameStore.setState({room: newRoom})
                     room.playing = newRoom.playing;
                     room.won = newRoom.won;
+                    console.log(" Room after updating", room)
+
+                    console.log
                 }
                 else
                     document.getElementById(who).style.stroke = '#8ee694'
@@ -103,7 +111,7 @@ const Play = () => {
 
             // match has finished
             socket.on('match-finish', newRoom => {
-                set({room: newRoom})
+                gameStore.setState({room: newRoom})
                 navigate('/finish');
             })
 
