@@ -2,11 +2,14 @@ import React, { useContext, useState } from 'react';
 import UserContext from '../../Contexts/UserContext';
 import './Finish.css';
 import { useNavigate } from 'react-router-dom';
+import gameStore from '../../store/gameStore';
 
 const Finish = () => {
   const context = useContext(UserContext);
-  const {socket, winners, setSocket, setRoom } = context;
+  // const {socket, winners, setSocket, setRoom } = context;
+  const {socket, room } = gameStore();
   const navigate = useNavigate();
+  const winners = room?.won;
 
   useState(()=>{
     if(!winners){
@@ -31,8 +34,7 @@ const Finish = () => {
   const handleExit = ()=>{
     if(socket){
       socket.disconnect();
-      setSocket(null);
-      setRoom(null);
+      gameStore.setState({socket: null, room: null})
     }
 
     navigate('/');

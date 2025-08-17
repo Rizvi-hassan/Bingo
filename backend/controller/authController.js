@@ -1,18 +1,21 @@
 import userModel from "../models/userModel.js";
 import { oauth2client } from "../utils/googleConfig.js";
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
 import User from './../models/userModel.js'
 import encrypt from './../utils/encryptPwd.js'
 import generateToken from "../utils/generateToken.js";
 import deleteFromCloudinary from "../utils/deleteFromCloudinary.js";
+import bcrypt from 'bcrypt';
+import {config} from 'dotenv'
+config();
 
 export const googleLogin = async (req, res) => {
     try {
 
         //recieves code from frontend and verifies its authenticity.
         const { code } = req.query;
-        console.log("login initiate");
+        console.log("login initiate -> ", code);
+
         const googleRes = await oauth2client.getToken(code); // extracts token from the code
         oauth2client.setCredentials(googleRes.tokens);  // verifies the token
 
@@ -31,19 +34,26 @@ export const googleLogin = async (req, res) => {
         // saves the uesr details in the db
         let user = await userModel.findOne({ email });
         if (!user) {
-            user = await userModel.create({ name, email, image: picture })
+            user = await userModel.create({  email, username: name, profile: picture, authType: 'google' });
+            await user.save()
+        } else {
+            if (user.authType !== 'google') {
+                return res.status(401).json({message: "User login using google failed"})
+            }
         }
 
-        const { _id } = user;
-        const token = jwt.sign({ _id, email }, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_TIMEOUT
-        });
 
-        return res.status(200).json({
-            message: 'Success',
-            token,
-            user
+        generateToken(res, user._id);
+
+        res.status(200).json({
+            success: true,
+            user: {
+                email: user.email,
+                username: user.username,
+                profile: user.profile
+            }
         })
+        
     } catch (error) {
         res.status(500).json({
             message: "Internal Server error"
@@ -102,26 +112,28 @@ export const register = async (req, res) => {
 
 }
 
+// method: POST
 export const login = async (req, res) => {
     try {
         const {email, password} = req.body;
 
-        if (email.trim() === '' || password.trim() === '' ) {
+        if (!email || !password ) {
             return res.status(401).json({message: "All fields are required"});
         }
 
         const foundUser = await User.findOne({email: email}).select("+password");
         if (!foundUser) {
-            res.status(404).json({message: "No user with this email exists"});
+            return res.status(404).json({message: "No user with this email exists"});
         }
         
-        const isPwdValid = await bcrypt.compare(password, foundUser.password);
+        const isPwdValid = bcrypt.compare(password, foundUser.password);
         if (!isPwdValid) {
-            res.status(401).json({message: "Invalid Credentials"})
+            return res.status(401).json({message: "Invalid Credentials"})
         }
 
-        generateToken(res, foundUser);
-        res.status(200).json({
+        generateToken(res, foundUser._id);
+
+        return res.status(200).json({
             success: true,
             user: {
                 email: foundUser.email,
@@ -133,14 +145,14 @@ export const login = async (req, res) => {
 
     } catch (error) {
         console.log("Error in login: ", error);
-        res.status(500).json({message: "Internal server error"})
+        return res.status(500).json({message: "Internal server error"})
     }
 }
 
 export const checkAuth = async (req, res) => {
     try {
         const {user} = req;
-        res.status(200).json({
+        return res.status(200).json({
             user: {
                 email: user.email,
                 username: user.username,
@@ -148,7 +160,18 @@ export const checkAuth = async (req, res) => {
             }
         })
     } catch (error) {
-        
+        return res.status(500).json({
+            message: "Internal Server Error"
+        })
     }
 }
 
+
+export const logout = async (req, res) => {
+    res.cookie('jwtToken', '', {
+        maxAge: 0,
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'dev'
+    })
+    return res.status(200).json({message: "Logged out successfully."})
+}

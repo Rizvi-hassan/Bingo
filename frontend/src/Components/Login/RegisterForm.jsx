@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { Player } from '../Play/Player';
 import { api } from '../../lib/axios';
 import { useNavigate } from 'react-router-dom';
+import authStore from '../../store/authStore';
 
 const RegisterForm = () => {
     const navigate = useNavigate();
@@ -19,6 +20,7 @@ const RegisterForm = () => {
     const fileInputRef = useRef(null);
     const [errMsg, setErrMsg] = useState('');
     const [loading, setLoading] = useState(false);
+    const {set} = authStore();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -62,7 +64,7 @@ const RegisterForm = () => {
                 }
             });
             if (result.status === 200) {
-                console.log('Registration successful:', result.data);
+                set({user: result.data.user})
                 setInvalid(false);
                 setErrMsg('');
                 navigate('/');
@@ -140,7 +142,7 @@ const RegisterForm = () => {
                 {invalid && <span style={{ color: 'red', fontFamily: 'Open Sans, sans-serif', fontSize: '15px' }}>{errMsg}</span>}
                 <button type="submit" className="login-btn" disabled={loading} >{loading? "Loading..." : 'Register'}</button>
 
-                <p style={{ 'fontFamily': 'Open Sans, sans-serif', 'fontSize': '17px' }}>Have an account? <span style={{ 'color': 'blue' }} >Login</span> </p>
+                {/* <p style={{ 'fontFamily': 'Open Sans, sans-serif', 'fontSize': '17px' }}>Have an account? <span style={{ 'color': 'blue' }} >Login</span> </p> */}
             </form>
         </div>
     )

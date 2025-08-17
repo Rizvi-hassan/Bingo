@@ -107,6 +107,7 @@
     width: 10rem;
     display: block;
     margin: auto;
+    
 }
 
 @media screen and (max-width: 560px) {

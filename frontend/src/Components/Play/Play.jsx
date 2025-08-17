@@ -1,5 +1,5 @@
 import './Play.css'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Player } from './Player'
 import Grid_4 from './Grids/Grid_4'
 import Grid_5 from './Grids/Grid_5'
@@ -8,12 +8,17 @@ import Grid_7 from './Grids/Grid_7'
 import UserContext from '../../Contexts/UserContext'
 import { useNavigate } from 'react-router-dom'
 import { resetCheck } from './CheckBingo.mjs'
+import authStore from '../../store/authStore'
+import gameStore from '../../store/gameStore'
 
 const Play = () => {
 
     const navigate = useNavigate();
-    const context = useContext(UserContext)
-    const { user, room, socket, setSocket, setRoom, setWinners } = context;
+    // const { user, room, socket, setSocket, setRoom, setWinners } = context;
+    const { user } = authStore();
+    // const { room, socket, set} = gameStore();
+    const room = gameStore((state) => state.room)
+    const socket = gameStore((state) => state.socket)
 
 
     const [ready, isReady] = useState(false); // holds if a player is ready or not
@@ -34,11 +39,11 @@ const Play = () => {
 
         if (socket) {
 
-            // there is a change in players - update it
-            socket.on('update-room', (newRoom) => {
-                // console.log('updating room: ', newRoom);
-                setRoom(newRoom);
-            })
+            // // there is a change in players - update it
+            // socket.on('update-room', (newRoom) => {
+            //     // console.log('updating room: ', newRoom);
+            //     setRoom(newRoom);
+            // })
 
             // a player is ready - change its icon border to ready color
             socket.on('i-am-ready', (who) => {
@@ -53,8 +58,8 @@ const Play = () => {
             socket.on('player-turn', (who) => {
                 // console.log('player turn in room: ', room);
                 // setting all player`s circle color to blue (not ready)
-
-                for (let player of room?.players) {
+                console.log("room: ", room);
+                for (let player of room?.playing) {
                     // console.log(player);
                     if (document.getElementById(player?.email)) {
                         document.getElementById(player?.email).style.stroke = '#219EBC'
@@ -71,28 +76,42 @@ const Play = () => {
             })
 
             // player recieves the current move
-            socket.on('current-move', (move, email, isWon) => {
-                console.log('current move is', move);
-                if (isWon)
+            socket.on('current-move', (move, email, isWon, newRoom) => {
+                if (isWon){
                     document.getElementById(email).style.stroke = '#e4ff00'
+                    console.log(" Room before updating", room)
+                    // gameStore.setState({ room: newRoom })
+                    room.playing = newRoom.playing;
+                    room.won = newRoom.won;
+                    console.log(" Room after updating", room)
+                }
                 else
                     document.getElementById(email).style.stroke = '#8ee694'
-
+                
                 document.getElementById('move').style.transform = 'translateY(0px)'
                 setNo(move);
             })
-
+            
             // inform player that other player has played move
-            socket.on('move-played', (who, isWon) => {
-                if (isWon)
+            socket.on('move-played', (who, isWon, newRoom) => {
+                if (isWon){
                     document.getElementById(who).style.stroke = '#e4ff00'
+                    console.log(" Room before updating", room)
+                    // gameStore.setState({room: newRoom})
+                    room.playing = newRoom.playing;
+                    room.won = newRoom.won;
+                    console.log(" Room after updating", room)
+
+                    console.log
+                }
                 else
                     document.getElementById(who).style.stroke = '#8ee694'
+
             })
 
             // match has finished
-            socket.on('match-finish', winners => {
-                setWinners(winners);
+            socket.on('match-finish', newRoom => {
+                gameStore.setState({room: newRoom})
                 navigate('/finish');
             })
 
@@ -117,19 +136,19 @@ const Play = () => {
             // if match won by me
             if (!won) {
                 console.log('I won')
-                document.getElementById(user?.email).style.stroke = '#e4ff00'
-                socket.emit('won-match', room?.roomId, user);
+                // document.getElementById(user?.email).style.stroke = '#e4ff00'
+                // socket.emit('won-match', room?.roomId, user);
                 setWon(true);
             }
         }
     }, [bingo])
 
-
+    // TODO: fix player wins trigger and room update issue after player won
     const sendMyMove = (move, isWon) => {
         console.log('sending my move: ', move);
         setNo(move);
         socket.volatile.emit('my-move', room?.roomId, move, user?.email, isWon);
-        document.getElementById(user?.email).style.stroke = '#8ee694';
+        if(!isWon) document.getElementById(user?.email).style.stroke = '#8ee694';
         setMyTurn(false);
     }
 
@@ -170,8 +189,7 @@ const Play = () => {
         try {
             // socket.emit('delete-room', room?.roomId);
             socket.disconnect();
-            setSocket(null);
-            setRoom(null);
+            set({socket: null, room: null})
 
         } catch (error) {
 

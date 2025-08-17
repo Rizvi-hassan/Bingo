@@ -5,6 +5,7 @@ import './utils/dbConnection.js';
 import authRouter from './routes/authRouter.js';
 import { app, server } from "./lib/socket.js";
 import cors from 'cors';
+import  express  from 'express';
 const port = process.env.PORT ||8080
 
 app.use(cors({
@@ -13,6 +14,8 @@ app.use(cors({
 }));
 
 app.use(CookieParser())
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 
 app.get('/', (req, res)=>{
     res.send("Hello from auth server")

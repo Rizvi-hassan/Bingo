@@ -1,8 +1,6 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-// import { faClipboard } from '@fortawesome/free-regular-svg-icons'
 import './host.css'
 import UserContext from '../../Contexts/UserContext';
 import { Player } from './../Play/Player';
@@ -10,13 +8,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import {useClipboard} from 'react-haiku'
+import gameStore from '../../store/gameStore';
+import authStore from '../../store/authStore';
 
 const Lobby = () => {
 
     // const [boardSize, setBoardSize] = useState(5);
 
-    const context = useContext(UserContext);
-    const { user, socket, setSocket, room, setRoom } = context;
+    // const { user, socket, setSocket, room, setRoom } = context;
+    const { user } = authStore()
+    const { socket, room, set} = gameStore();
     const navigate = useNavigate();
 
     const clipboard = useClipboard({timeout: 2000})
@@ -24,8 +25,8 @@ const Lobby = () => {
 
 
     useEffect(() => {
-        // console.log('lobby is:', room);
-        // console.log('User is:', user);
+        console.log('lobby is:', room);
+        console.log('User is:', user);
 
         if (!user || !room) {
             // console.log('navigating to home')
@@ -48,7 +49,7 @@ const Lobby = () => {
     useEffect(() => {
         if (socket) {
             socket.on('update-room', (room) => {
-                setRoom(room);
+                set({room: room});
                 // console.log('room updated: ', room);
                 changeBoardSize(room?.boardSize);
                 // setBoardSize(room?.boardSize);
@@ -58,15 +59,17 @@ const Lobby = () => {
                 leaveRoom();
             })
 
-            socket.on('start-game', () => {
+            socket.on('start-game', (room) => {
+                console.log('test working')
+                set({room: room})
+                console.log(room)
                 navigate('/play');
             })
 
             socket.on('kick-player', () => {
                 // console.log('exiting from room');
                 socket.disconnect();
-                setSocket(null);
-                setRoom(null);
+                set({socket: null, room: null})
                 navigate('/');
             })
 
@@ -89,8 +92,7 @@ const Lobby = () => {
     const leaveRoom = () => {
         socket.emit('leave-room', room?.roomId, user.email);
         socket.disconnect();
-        setSocket(null);
-        setRoom(null);
+        set({socket: null, room: null})
         navigate('/');
     }
 

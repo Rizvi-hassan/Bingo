@@ -2,23 +2,25 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useGoogleLogin } from '@react-oauth/google'
 import { googleAuth } from '../Api/api';
 import { useNavigate } from 'react-router-dom';
-import UserContext from '../../Contexts/UserContext';
 import './login.css';
 import google from '../../assets/images/Google.png';
 import { api } from '../../lib/axios';
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+import authStore from '../../store/authStore';
 
 const Auth = () => {
 
     const navigate = useNavigate();
-    const context = useContext(UserContext);
-    const { saveUser } = context;
+
     const [loading, setLoading] = useState(true);
     const [isLoginVisible, setIsLoginVisible] = useState(true);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isLoggingGoole, setIsLoggingGoole] = useState(false);
+    const { setUser } = authStore();
+    const [invalid, setInvalid] = useState(false);
+    const [errMsg, setErrMsg] = useState("")
 
 
     const checkStaus = async () => {
@@ -44,19 +46,19 @@ const Auth = () => {
         try {
             // console.log(authRes);
             setIsLoggingGoole(true);
+            setInvalid(false);
+            setErrMsg("");
             if (authRes['code']) {
                 const result = await googleAuth(authRes['code']);
-                const { email, name, image } = result.data.user;
-                const token = result.token;
-                const obj = { email, name, image, token };
-                // console.log(obj);
-                localStorage.setItem('bingo-user-info', JSON.stringify(obj));
-                saveUser({ email, name, image });
+                const { email, username, profile } = result.data.user;
+                setUser({email, username, profile});
 
                 navigate('/');
             }
         } catch (err) {
             console.log('error while requesting: ', err)
+            setInvalid(true);
+            setErrMsg(err.response.data.message);
         } finally {
             setIsLoggingGoole(false);
         }
@@ -88,9 +90,10 @@ const Auth = () => {
                 {isLoginVisible ? <LoginForm /> : <RegisterForm />}
             </div>
 
-            <hr style={{ 'width': '90%', 'border': '1px solid black', 'margin': 'auto' }} />
+            <hr style={{ 'width': '90%', 'border': '1px solid black', 'margin': 'auto', margin: '1rem'}} />
 
-            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', 'marginTop': '2rem'}}>
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem', 'marginTop': '2rem'}}>
+                {invalid && <span style={{ color: 'red', fontFamily: 'Open Sans, sans-serif', fontSize: '15px' }}>{errMsg}</span>}
                 <button className='google-btn' onClick={googleLogin} disabled={loading || isLoggingGoole}>{loading ? "Loading" : isLoggingGoole ? "Logging In" : <span className='google-btn'><img className='google-logo' src={google} alt="google" /> Login with google</span>}</button>
                 <button className="home-btn" onClick={() => navigate('/')}>Home</button>
 

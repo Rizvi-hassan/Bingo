@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     padding: 5rem;
-    height: 100vh;
+    /* height: 100vh; */
     gap: 2rem;
 }
 
@@ -19,7 +19,16 @@
             -6px -6px 10px -1px #ffffff63;
 }
 
-.me .login-btn {
+.me .buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+}
+
+.me .logout-btn, .me .edit-btn {
     color: white;
     background-color: #ff1717;
     border: 5px solid #bb0000;
@@ -27,13 +36,26 @@
     padding: 0.5rem 1rem;
     font-size: 17px;
     transition: scale 100ms ease, background-color 100ms ease;
+    width: 12rem;
+}
+
+.me .edit-btn{
+    background-color: #17d1ff;
+    border: 5px solid #0076bb;
 }
 
 
-.me .login-btn:active {
+.me .logout-btn:active {
     background-color: #ff7272;
     scale: 0.9;
 }
+
+.me .edit-btn:active{
+    background-color: #72d2ff;
+    scale: 0.9;
+
+}
+
 
  .home-btn {
     color: white;

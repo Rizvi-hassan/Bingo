@@ -11,13 +11,25 @@ import NotFound from './Components/NotFound/NotFound'
 import Auth from './Components/Login/Auth'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import Finish from './Components/Finish/Finish'
+import authStore from './store/authStore'
+import { useEffect } from 'react'
 
 function App() {
+
+  const {user, checkAuth} = authStore();
+
+  useEffect( ()=>{
+
+    if (!user) {
+      checkAuth();
+    }
+  }, [])
 
   const GoogleAuthWrapper = ()=>{
     return(
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT}>
-        <Auth/>
+        <Auth/>import authStore from './store/authStore';
+
       </GoogleOAuthProvider>
     )
   }
