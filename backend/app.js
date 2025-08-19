@@ -9,7 +9,9 @@ import  express  from 'express';
 const port = process.env.PORT ||8080
 
 app.use(cors({
-    origin: ['http://localhost:5173', process.env.CORS_ORIGIN],
+    origin: process.env.CORS_ORIGINS 
+    ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
+    : ['http://localhost:5173'],
     credentials: true
 }));
 

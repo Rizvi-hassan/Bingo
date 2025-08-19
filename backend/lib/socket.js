@@ -2,13 +2,19 @@ import { Server } from "socket.io";
 import { createServer } from "http";
 import express from "express";
 import { instrument } from '@socket.io/admin-ui';
+import {config} from 'dotenv';
+config();
 
 const app = express();
 const server = createServer(app);
 
+console.log(process.env.CORS_ORIGINS.split(',').map(origin => origin.trim()));
+
 const io = new Server(server, {
     cors: {
-        origin: ["https://bingo-multiplayer.netlify.app", 'http://localhost:5173', "https://admin.socket.io"],
+        origin: process.env.CORS_ORIGINS
+        ? process.env.CORS_ORIGINS.split(',').map(origin => origin.trim())
+        : ['http://localhost:5173'],
         methods: ['GET', 'POST'],
         credentials: true
     },

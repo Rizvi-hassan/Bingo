@@ -18,12 +18,16 @@ const Auth = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isLoggingGoole, setIsLoggingGoole] = useState(false);
-    const { setUser } = authStore();
+    const { setUser, user } = authStore();
     const [invalid, setInvalid] = useState(false);
     const [errMsg, setErrMsg] = useState("")
 
 
     const checkStaus = async () => {
+        if(user !== null){
+            navigate('/');
+            
+        }
         try {
             const response = await api.get('/auth/test');
             if (response.status == 200) {
@@ -37,7 +41,7 @@ const Auth = () => {
     useEffect(() => {
         checkStaus();
 
-    }, [loading])
+    }, [loading, user])
 
 
 
@@ -90,11 +94,11 @@ const Auth = () => {
                 {isLoginVisible ? <LoginForm /> : <RegisterForm />}
             </div>
 
-            <hr style={{ 'width': '90%', 'border': '1px solid black', 'margin': 'auto', margin: '1rem'}} />
+            <hr style={{ 'width': '90%', 'border': '1px solid black', 'margin': '20px auto',}} />
 
             <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3rem', 'marginTop': '2rem'}}>
                 {invalid && <span style={{ color: 'red', fontFamily: 'Open Sans, sans-serif', fontSize: '15px' }}>{errMsg}</span>}
-                <button className='google-btn' onClick={googleLogin} disabled={loading || isLoggingGoole}>{loading ? "Loading" : isLoggingGoole ? "Logging In" : <span className='google-btn'><img className='google-logo' src={google} alt="google" /> Login with google</span>}</button>
+                <button className='google-btn' onClick={googleLogin} disabled={loading || isLoggingGoole}>{loading ? "Loading" : isLoggingGoole ? "Logging In" : <span className='google-btn'><img className='google-logo' src='/google.svg' alt="google" /> Login with google</span>}</button>
                 <button className="home-btn" onClick={() => navigate('/')}>Home</button>
 
             </div>

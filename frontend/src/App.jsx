@@ -28,7 +28,7 @@ function App() {
   const GoogleAuthWrapper = ()=>{
     return(
       <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT}>
-        <Auth/>import authStore from './store/authStore';
+        <Auth/>
 
       </GoogleOAuthProvider>
     )
