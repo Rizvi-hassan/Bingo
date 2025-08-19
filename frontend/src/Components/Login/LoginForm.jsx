@@ -14,6 +14,7 @@ const LoginForm = () => {
     const { setUser } = authStore();
     const [errMsg, setErrMsg] = useState('');
     const navigate = useNavigate();
+    const [isLoggingIn, setIsLogginIn] = useState(false);
 
     const handleLogin = async(event) => {
         event.preventDefault();
@@ -27,6 +28,7 @@ const LoginForm = () => {
         }
 
         try {
+            setIsLogginIn(true)
             const response = await api.post('/auth/login', formData);
             if (response.status === 200){
                 setUser(response.data.user)
@@ -37,7 +39,10 @@ const LoginForm = () => {
             console.log(error);
             setInvalid(true);
             setErrMsg(error.message);
+        } finally {
+            setIsLogginIn(false)
         }
+
     }
 
     const handleChange = (event) => {
@@ -60,7 +65,7 @@ const LoginForm = () => {
                 </div>
 
                 {invalid && <span style={{ color: 'red', fontFamily: 'Open Sans, sans-serif', fontSize: '15px' }}>{errMsg}</span>}
-                <button type="submit" className="login-btn" >Login</button>
+                <button type="submit" className="login-btn" disabled={isLoggingIn} >{isLoggingIn ? "Loading" : "Login"}</button>
                 
                 {/* <p style={{ 'fontFamily': "Open Sans, sans- serif", 'fontSize': '17px' }}>Don't have an account? <span style={{ 'color': '#1a4a9b', 'textDecoration': 'underline' }} >Register</span> </p> */}
             </form>

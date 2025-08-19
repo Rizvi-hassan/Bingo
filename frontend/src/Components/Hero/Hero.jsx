@@ -13,7 +13,7 @@ const Hero = () => {
     const [loadingJoin, setLoadingJoin] = useState(false);
 
     const { user, isCheckingAuth  } = authStore();
-    const { socket, set } = gameStore();
+    const { socket, set, bingoAnimated } = gameStore();
 
     const navigate = useNavigate();
     const url = import.meta.env.VITE_API_URL || 'http://localhost:8080'
@@ -86,7 +86,8 @@ const Hero = () => {
                 <button onClick={() => enterLobby('join')} className="btn">{loadingJoin ? 'loading...' : 'Join'}</button>
                 <Link to='/me'  ><button className="btn">Me</button></Link>
             </div>
-                {!isCheckingAuth && ((user === null) ?
+            {isCheckingAuth ? <span style={{ display: 'block', margin: 'auto', width: '300px', textAlign: 'center' }}>Server Starting...</span> 
+            : ((user === null) ?
                     <div className="login-box">
                         <button className="login-btn" id='login-btn' onClick={() => { navigate('/login') }}>
                             Login/Register

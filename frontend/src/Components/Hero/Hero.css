@@ -27,7 +27,7 @@
     80%,
     100% {
         width: max(20%, 200px);
-        margin-top: 10vh;
+        margin-top: 7vh;
         height: max(20vh, 100px);
     }
 }
