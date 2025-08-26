@@ -299,14 +299,19 @@ io.on('connect', socket => {
                         // the disconnected player is not current player
 
                         // remove him from playing list and check if all remaining players played or not
-                        let remain = availableRooms[id].playing.filter((val) => {
+                        let remain = [];
+                        if (availableRooms[id].playing) {
+                            
+                        remain = availableRooms[id].playing.filter((val) => {
                             return val.email !== email
                         })
+                        }
                         availableRooms[id].playing = remain;
                         // if all players are not ready, no need to go for  checkPlayed
                         if (room.ready >= room.playing.length) {
                             checkPlayed(id);
                         }
+                        
                     }
 
 
