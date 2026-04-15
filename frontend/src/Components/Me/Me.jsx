@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import './Me.css';
 import authStore from '../../store/authStore';
 import { api } from '../../lib/axios';
+
+const userIcon = 'images/default_user.png'
+
 const Me = () => {
   // const context = useContext(UserContext);
   const { user, setUser } = authStore();

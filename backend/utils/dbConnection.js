@@ -1,4 +1,6 @@
 import { connect } from 'mongoose';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const DB_URL = process.env.MONGO_DB_URI || 'mongodb://localhost:27017/bingoDB';
 

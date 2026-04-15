@@ -36,9 +36,9 @@ const LoginForm = () => {
             }
             
         } catch (error) {
-            console.log(error);
+            // console.log(error.response.data);
             setInvalid(true);
-            setErrMsg(error.message);
+            setErrMsg(error.response?.data?.message || "An error occurred. Please try again.");
         } finally {
             setIsLogginIn(false)
         }

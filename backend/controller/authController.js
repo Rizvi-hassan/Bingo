@@ -122,7 +122,7 @@ export const login = async (req, res) => {
         }
 
         const foundUser = await User.findOne({email: email}).select("+password");
-        if (!foundUser) {
+        if (!foundUser || foundUser.authType === 'google') {
             return res.status(404).json({message: "No user with this email exists"});
         }
         
